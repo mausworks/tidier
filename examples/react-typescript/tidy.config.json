@@ -1,0 +1,19 @@
+{
+  "$schema": "../../packages/tidy-lib/src/tidy.config.schema.json",
+  "files": {
+    "**/src/setupTests.*": "camelCase",
+    "**/src/reportWebVitals.ts": "camelCase",
+    "**/src/**/index.*": "kebab-case",
+    "**/src/**/*.{tsx,jsx,css,scss,sass}": "PascalCase.kebab-case",
+    "**/src/*": "kebab-case",
+    "**/README*": "UPPER CASE.lc",
+    "**/LICENSE*": "UPPER CASE.lc",
+    "**/Dockerfile*": "PascalCase.lc",
+    "**/Procfile*": "PascalCase.lc",
+    "**/*.{ts,js}": "kebab-case",
+    "**/*": "kebab-case"
+  },
+  "folders": {
+    "**/*": "kebab-case"
+  }
+}
