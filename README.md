@@ -1,9 +1,13 @@
-# Tidy - The Workspace Formatter
+# Tidy - The workspace formatter
 
 Tidy helps you keep your projects & workspaces clean by renaming files to stay on convention.
 
 Tidy currently supports two modes, "checking" and "writing", it is very much like other formatters or linters.
 Running `tidy -c` will check for problems in the project, and running `tidy -w` will write fixes to the project.
+
+Tidy also supports a watch mode (use `--watch` or `-W`). 
+When running in watch mode, Tidy will only look for new problems added to the project,
+it is not going to analyze the project or fix any preexisting problems.
 
 ## Configuration
 
