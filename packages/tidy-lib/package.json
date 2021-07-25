@@ -1,5 +1,5 @@
 {
-  "name": "tidy-lib",
+  "name": "@tidy/lib",
   "version": "0.1.0",
   "description": "Abstractions for keeping your workspaces & projects tidy",
   "license": "ISC",

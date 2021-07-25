@@ -1,10 +1,11 @@
 {
-  "name": "tidy-cli",
+  "name": "@tidy/cli",
   "version": "0.1.0",
   "description": "A CLI for keeping your workspaces & projects tidy",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",
+  "bin": "tidy",
   "scripts": {
     "start": "node ./dist/index.js",
     "test": "jest",
