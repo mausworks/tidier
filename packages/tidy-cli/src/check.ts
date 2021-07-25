@@ -8,6 +8,11 @@ import {
   immutableChangeset,
   Change,
 } from "@tidy/lib";
+import {
+  formatRename,
+  okConventionBanner,
+  useConventionBanner,
+} from "./output";
 
 export interface CheckSummary {
   ok: Change<Rename>[];
@@ -72,7 +77,7 @@ export async function check(project: Project) {
   const summary = summarizeResult(changes);
 
   console.log();
-  console.log(`${bgGreen("  ")} ${green("OK")} ${bgGreen("                ")}`);
+  console.log(okConventionBanner());
 
   for (const [path] of summary.ok) {
     const name = basename(path);
@@ -81,17 +86,12 @@ export async function check(project: Project) {
     console.log(`${folder}/${green(name)}`);
   }
 
-  for (const [convention, change] of Object.entries(summary.problems)) {
+  for (const [namePattern, changes] of Object.entries(summary.problems)) {
     console.log();
-    console.log(
-      `${bgRed("  ")} ${red("USE")} ${bgRed(` ${black(convention)} `)}`
-    );
+    console.log(useConventionBanner(namePattern));
 
-    for (const [path, rename] of change) {
-      const name = basename(path);
-      const folder = dirname(path);
-
-      console.log(`${folder}/${red(name)} ⟶  ${green(rename.name)}`);
+    for (const change of changes) {
+      console.log(formatRename(change));
     }
   }
 }

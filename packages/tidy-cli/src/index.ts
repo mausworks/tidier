@@ -19,6 +19,13 @@ const options = yargs(process.argv.slice(2))
     default: false,
     type: "boolean",
   })
+  .options("watch", {
+    alias: "W",
+    desc: "Watch the project for changes, you can combine this with 'check' or 'write'.",
+    demandOption: false,
+    default: false,
+    type: "boolean",
+  })
   .option("config", {
     alias: "C",
     demandOption: false,

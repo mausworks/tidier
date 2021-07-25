@@ -29,6 +29,11 @@ export interface TidyCLIActions {
   readonly check?: boolean;
   /** If true, write fixes for problems to the project. */
   readonly write?: boolean;
+  /**
+   * If true, files and folders within the project will be watched for problems.
+   * Combine with `check` or `write` to get automatic linting linting and fixes.
+   */
+  readonly watch?: boolean;
 }
 
 /** A combination of all the available options for the Tidy CLI. */
