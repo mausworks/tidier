@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "concurrently 'yarn start:tidy' 'yarn start:lib' 'yarn start:cli'",
+    "start:lib": "cd packages/tidy-lib && yarn build -w",
+    "start:cli": "cd packages/tidy-cli && yarn build -w",
+    "start:tidy": "packages/tidy-cli/tidy -Ww"
+  },
+  "workspaces": [
+    "packages/tidy-lib",
+    "packages/tidy-cli"
+  ],
+  "dependencies": {
+    "concurrently": "^6.2.0"
+  }
+}

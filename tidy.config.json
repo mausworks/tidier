@@ -1,0 +1,12 @@
+{
+  "ignore": ["examples"],
+  "files": {
+    "**/README*": "UPPER CASE.lc",
+    "**/LICENSE*": "UPPER CASE.lc",
+    "**/*": "kebab-case.lc"
+  },
+  "folders": {
+    "**/__*": "lower case",
+    "**/*": "kebab-case"
+  }
+}

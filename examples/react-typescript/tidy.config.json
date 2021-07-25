@@ -12,6 +12,7 @@
     "**/*": "kebab-case.lc"
   },
   "folders": {
+    "**/__*": "lower case",
     "**/*": "kebab-case"
   }
 }
