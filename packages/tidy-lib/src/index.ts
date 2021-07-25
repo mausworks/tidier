@@ -4,3 +4,4 @@ export * from "./convention";
 export * from "./glob";
 export * from "./project";
 export * from "./rename";
+export * from "./watch";
