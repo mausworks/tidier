@@ -48,7 +48,7 @@ export async function readConfig(path: string): Promise<TidyJSONConfig> {
 
 /**
  * Parses the name pattern into a name format.
- * @param namePattern The string to parse the format from, e.g `"UPPER CASE.lc"`.
+ * @param namePattern The name pattern string to parse the format from; e.g `"UPPER CASE.lc"`.
  */
 export function parseNamePattern(namePattern: string): NameFormat {
   const format: EitherCasing[] = [];

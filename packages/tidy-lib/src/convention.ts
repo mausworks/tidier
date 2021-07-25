@@ -40,7 +40,7 @@ export type GeneralAlias = keyof typeof generalAliases;
 /** Describes how each fragment of a name should be formatted. */
 export type NameFormat = (GeneralCasing | GeneralAlias)[];
 
-/** Describes which files should apply what name format. */
+/** Describes which files should use what name format. */
 export interface NameConvention {
   /** The glob pattern to match. */
   readonly glob: string;
