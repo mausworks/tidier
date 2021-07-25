@@ -43,8 +43,11 @@ function renameToConvention(
 
 export async function watchProject(
   project: Project,
-  { write = false }: TidyCLIActions
+  { write }: TidyCLIActions
 ) {
+  const name = basename(project.resolve("."));
+  console.log(`Watching project '${name}' ...`);
+
   const watcher = await watch(project);
 
   async function renameFile(path: string, newName: string) {
@@ -72,7 +75,7 @@ export async function watchProject(
           console.log(formatRename([path, undefined]));
         }
       } else if (rename) {
-        renameFile(path, rename.name);
+        await renameFile(path, rename.name);
 
         console.log(formatRename([path, rename]));
       }

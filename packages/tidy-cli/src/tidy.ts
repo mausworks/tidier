@@ -1,5 +1,3 @@
-import {} from "fs";
-import { option } from "yargs";
 import { check } from "./check";
 import { TidyCLIOptions } from "./options";
 import { projectFromOptions } from "./project";

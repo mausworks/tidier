@@ -13,6 +13,11 @@ export interface ProjectWatcher {
   onFolderChange(callback: PathCallback): Unsubscribe;
 }
 
+export interface ChangeDispatcher {
+  fileChanged(change: string, path: string): void;
+  folderChange(change: string, path: string): void;
+}
+
 function getChange(stats: fs.Stats | null, event: string): PathChange | null {
   if (stats === null) {
     return "delete";
@@ -23,68 +28,63 @@ function getChange(stats: fs.Stats | null, event: string): PathChange | null {
   }
 }
 
+function watchFolder(
+  project: Project,
+  folder: string,
+  dispatcher: ChangeDispatcher
+): FSWatcher {
+  const watchRoot = project.resolve(folder);
+  const watcher = fs.watch(watchRoot, { encoding: "utf-8" });
+
+  watcher.on("change", async (event: string, name: string) => {
+    const path = join(folder, name);
+
+    if (project.ignores(path)) {
+      return;
+    }
+
+    const stats = await stat(project.resolve(path)).catch(() => null);
+    const change = getChange(stats, event);
+
+    if (!change) {
+      return;
+    }
+
+    if (stats?.isDirectory()) {
+      dispatcher.folderChange(change, path);
+    } else if (stats?.isFile()) {
+      dispatcher.fileChanged(change, path);
+    }
+  });
+
+  return watcher;
+}
+
 export async function watch(project: Project): Promise<ProjectWatcher> {
   const onFileChange = callbacks<PathCallback>();
   const onFolderChange = callbacks<PathCallback>();
   const watchers: Record<string, FSWatcher> = Object.create(null);
 
-  function addWatcher(folder: string) {
-    const watchRoot = project.resolve(folder);
-
-    if (watchers[watchRoot]) {
-      return;
-    }
-
-    const watcher = fs.watch(watchRoot, { encoding: "utf-8" });
-
-    watcher.on("change", async (event: string, name: string) => {
-      const path = join(folder, name);
-
-      if (project.ignores(path)) {
-        return;
-      }
-
-      const stats = await stat(project.resolve(path)).catch(() => null);
-      const change = getChange(stats, event);
-
-      if (!change) {
-        return;
-      }
-
-      if (stats?.isFile()) {
-        onFileChange.call(change, path);
-      } else if (stats?.isDirectory()) {
-        const rootPath = join(watchRoot, path, name);
-
-        if (change === "delete" && watchers[rootPath]) {
-          watchers[rootPath].close();
-          delete watchers[rootPath];
-        } else if (change === "update" && !watchers[rootPath]) {
-          addWatcher(join(path, name));
-        }
-
-        onFolderChange.call(change, path);
-      }
-    });
-
-    watcher.on("close", () => {
-      if (watchers[watchRoot]) {
-        delete watchers[watchRoot];
-      }
-    });
-
-    watcher.on("error", () => {
-      if (watchers[watchRoot]) {
-        delete watchers[watchRoot];
-      }
-    });
-
-    watchers[watchRoot] = watcher;
-  }
-
   for (const folder of await project.listFolders("**/*")) {
-    addWatcher(folder);
+    watchers[folder] = watchFolder(project, folder, {
+      folderChange: onFolderChange.call,
+      fileChanged: onFileChange.call,
+    });
   }
+
+  onFolderChange.add(async (_, path) => {
+    const stats = await stat(project.resolve(path)).catch(() => null);
+
+    if ((!stats || !stats.isDirectory()) && watchers[path]) {
+      watchers[path].close();
+      delete watchers[path];
+    } else {
+      watchers[path] = watchFolder(project, path, {
+        folderChange: onFolderChange.call,
+        fileChanged: onFileChange.call,
+      });
+    }
+  });
 
   return {
     onFileChange: onFileChange.add,
