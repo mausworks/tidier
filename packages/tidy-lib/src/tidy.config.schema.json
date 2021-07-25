@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "properties": {
+    "ignore": {
+      "description": "An array of sub-directories to include [NOTE: .gitignore is also used].",
+      "examples": [["/build", "/node_modules"]],
+      "type": "array"
+    },
+    "files": {
+      "type": "object",
+      "description": "An object which keys are glob patterns and values are naming conventions.",
+      "examples": [
+        {
+          "**/src/setupTests.*": "camelCase.lc",
+          "**/src/reportWebVitals.ts": "camelCase.lc",
+          "**/src/**/index.*": "camelCase.lc",
+          "**/src/**/*.{tsx,jsx,css,scss,sass}": "PascalCase.kebab-case.lc",
+          "**/README*": "UPPER CASE.lc",
+          "**/LICENSE*": "UPPER CASE.lc",
+          "**/Dockerfile*": "PascalCase.lc",
+          "**/Procfile*": "PascalCase.lc",
+          "**/*": "kebab-case.lc"
+        },
+        {
+          "src/**/*.{cs,csproj}": "PascalCase.PascalCase.lc",
+          "src/setupTests.*": "camelCase.lc",
+          "src/**/index.*": "kebab-case.lc",
+          "src/**/*.{tsx,jsx,css,scss,sass}": "PascalCase.lc",
+          "src/**/*": "kebab-case.lc",
+          "*": "kebab-case.lc"
+        }
+      ],
+      "patternProperties": {
+        ".*": {
+          "description": "The naming convention the file matching this glob.",
+          "examples": [
+            "preserve.p",
+            "kebab-case.lc",
+            "camelCase.lc",
+            "PascalCase.lc",
+            "PascalCase.kebab-case.lc",
+            "snake_case.lc",
+            "lower case.lc",
+            "Title Case.lc",
+            "UPPER CASE.lc",
+            "COBOL-CASE.UC",
+            "Train-Case.lc",
+            "Snake_Title_Case.lc",
+            "UPPER_SNAKE_CASE.lc",
+            "sPoNGEcAsE.lc"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "folders": {
+      "type": "object",
+      "description": "An object which keys are glob patterns, and values are naming conventions.",
+      "patternProperties": {
+        ".*": {
+          "description": "The naming convention the folders matching this glob.",
+          "examples": [
+            "preserve",
+            "lower case",
+            "Title Case",
+            "UPPER CASE",
+            "camelCase",
+            "PascalCase",
+            "PascalCase.camelCase",
+            "kebab-case",
+            "COBOL-CASE",
+            "Train-Case",
+            "snake_case",
+            "Snake_Title_Case",
+            "UPPER_SNAKE_CASE",
+            "sPoNGEcAsE"
+          ],
+          "type": "string"
+        }
+      }
+    }
+  }
+}
