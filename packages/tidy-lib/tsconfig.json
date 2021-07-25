@@ -1,0 +1,16 @@
+{
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["es2019"],
+    "types": ["node", "jest"],
+    "outDir": "dist",
+    "declaration": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  }
+}
