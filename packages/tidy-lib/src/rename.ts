@@ -39,8 +39,8 @@ const recasers: Record<EitherCasing, Recaser> = {
   "Snake_Title_Case": (frag) =>
     capitalCase(frag, { delimiter: "_", transform: titleCase }),
   "UPPER_SNAKE_CASE": (frag) => snakeCase(frag, { transform: upperCase }),
-  "camelCase": (frag) => camelCase(frag),
-  "PascalCase": (frag) => pascalCase(frag),
+  "camelCase": (frag) => camelCase(frag, { delimiter: "" }),
+  "PascalCase": (frag) => pascalCase(frag, { delimiter: "" }),
   "sPoNGEcAsE": (frag) => spongeCase(frag),
   "p": (frag) => frag,
   "lc": (frag) => lowerCase(frag),
