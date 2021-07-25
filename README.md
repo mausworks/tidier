@@ -2,6 +2,8 @@
 
 Tidy helps you keep your projects & workspaces clean by renaming files to stay on convention.
 
+https://user-images.githubusercontent.com/8259221/126910139-162c5e89-b2c7-403a-8c9d-0091a229fe0d.mp4
+
 Tidy currently supports two modes, "checking" and "writing", it is very much like other formatters or linters.
 Running `tidy -c` will check for problems in the project, and running `tidy -w` will write fixes to the project.
 
