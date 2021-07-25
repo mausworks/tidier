@@ -77,9 +77,9 @@ Using the _general casing_ `lower case` has a similar effect,
 where all fragments subsequent to the first will be in lower case, including the extension.
 
 ```
-UPPER CASE            -> README.MD, Some.LONGER.FILE NAME.TXT
-UPPER CASE.lc         -> README.md, Some.LONGER.FILE NAME.txt
-UPPER CASE.lower case -> README.md, Some.longer.file name.txt
+UPPER CASE            -> README.MD, SOME.LONGER.FILE NAME.TXT
+UPPER CASE.lc         -> README.md, SOME.LONGER.FILE NAME.txt
+UPPER CASE.lower case -> README.md, SOME.longer.file name.txt
 ```
 
 The extension casing can only be used _once_ within the name format,
@@ -90,7 +90,7 @@ here are a few more "nuanced" examples:
 
 ```
 PascalCase.kebab-case.lc    -> README.md, Some.longer.file-name.txt
-Title Case.COBOL-CASE.UC    -> README.MC, Some.LONGER.FILE-NAME.txt
+Title Case.COBOL-CASE.UC    -> README.MD, Some.LONGER.FILE-NAME.txt
 snake_case.UPPER_SNAKE_CASE -> readme.MD, some.LONGER.FILE_NAME.TXT
 Title Case.sPoNGEcAsE.Tc    -> Readme.Md, Some.lOnGEr.fIlE nAMe.Txt *
 ```
