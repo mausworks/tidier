@@ -1,10 +1,10 @@
 import { check } from "./check";
-import { TidyCLIOptions } from "./options";
+import { TidierCLIOptions } from "./options";
 import { projectFromOptions } from "./project";
 import { watchProject } from "./watch";
 import { write } from "./write";
 
-export async function tidy(options: TidyCLIOptions) {
+export async function tidier(options: TidierCLIOptions) {
   const project = await projectFromOptions(options);
 
   if (options.watch) {

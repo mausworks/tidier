@@ -4,7 +4,7 @@
     "module": "commonjs",
     "lib": ["es2019"],
     "types": ["node", "jest"],
-    "outDir": "dist",
+    "outDir": "dist/",
     "declaration": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,

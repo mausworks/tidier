@@ -6,10 +6,10 @@ import { fs, vol } from "memfs";
 import fc from "fast-check";
 
 import * as ap from "../test/arbitrary-paths";
-import { convertConfig, TidyConfig, TidyJSONConfig } from "./config";
+import { convertConfig, TidierConfig, TidierJSONConfig } from "./config";
 import { createProject } from "./project";
 
-const basicJSONConfig: TidyJSONConfig = {
+const basicJSONConfig: TidierJSONConfig = {
   ignore: [],
   files: {
     "**/*": "kebab-case.lc",
@@ -19,7 +19,7 @@ const basicJSONConfig: TidyJSONConfig = {
   },
 };
 
-const basicConfig: TidyConfig = convertConfig(basicJSONConfig);
+const basicConfig: TidierConfig = convertConfig(basicJSONConfig);
 
 const seedVolume = (
   root: string,
@@ -193,7 +193,7 @@ describe("listing", () => {
         async (root, folders) => {
           seedVolume(root, [], folders);
           const otherRoot = folders[folders.length - 1];
-          fs.writeFileSync(join(root, otherRoot, "tidy.config.json"), "{}");
+          fs.writeFileSync(join(root, otherRoot, "tidier.config.json"), "{}");
 
           const project = await createProject(root, basicConfig);
           const paths = await project.listFolders("**/*");

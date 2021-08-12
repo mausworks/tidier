@@ -1,4 +1,4 @@
-import { Change, NameConvention, Rename } from "@tidy/lib";
+import { Change, Rename } from "@tidier/lib";
 import { bgGreen, bgRed, black, green, red } from "colors";
 import { basename, dirname } from "path";
 

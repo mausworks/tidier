@@ -5,12 +5,12 @@ import {
   nearestConfig,
   convertConfig,
   readConfig,
-} from "@tidy/lib";
+} from "@tidier/lib";
 
-import { TidyProjectOptions } from "./options";
+import { TidierProjectOptions } from "./options";
 
 export async function resolveConfigPath(path?: string): Promise<string | null> {
-  if (path && path.endsWith("tidy.config.json")) {
+  if (path && path.endsWith("tidier.config.json")) {
     const fullPath = resolve(process.cwd(), path);
 
     try {
@@ -53,7 +53,7 @@ export async function resolveProjectPath(
   }
 }
 
-export async function projectFromOptions(options: TidyProjectOptions) {
+export async function projectFromOptions(options: TidierProjectOptions) {
   const projectDirectory = await resolveProjectPath(options.project);
 
   const configPath =

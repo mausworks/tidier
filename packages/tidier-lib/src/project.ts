@@ -3,7 +3,7 @@ import { resolve, join, relative } from "path";
 import ignore from "ignore";
 
 import { NameConvention } from "./convention";
-import { containsConfig, TidyConfig } from "./config";
+import { containsConfig, TidierConfig } from "./config";
 import { createGlob, Glob } from "./glob";
 
 /** Boy, you do not want to look in these ... */
@@ -67,7 +67,7 @@ async function validateProjectRoot(root: string): Promise<void> {
 
 export async function createProject(
   root: string,
-  config: TidyConfig
+  config: TidierConfig
 ): Promise<Project> {
   await validateProjectRoot(root);
 

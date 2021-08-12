@@ -7,7 +7,7 @@ import {
   Changeset,
   immutableChangeset,
   Change,
-} from "@tidy/lib";
+} from "@tidier/lib";
 import {
   formatRename,
   okConventionBanner,

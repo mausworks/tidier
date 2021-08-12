@@ -8,9 +8,9 @@ import {
   Rename,
   rename,
   watch,
-} from "@tidy/lib";
+} from "@tidier/lib";
 
-import { TidyCLIActions } from "./options";
+import { TidierCLIActions } from "./options";
 import {
   formatRename,
   okConventionBanner,
@@ -43,7 +43,7 @@ function renameToConvention(
 
 export async function watchProject(
   project: Project,
-  { write }: TidyCLIActions
+  { write }: TidierCLIActions
 ) {
   const name = basename(project.resolve("."));
   console.log(`Watching project '${name}' ...`);

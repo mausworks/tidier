@@ -1,13 +1,14 @@
 {
-  "name": "@tidy/lib",
+  "name": "@tidier/lib",
   "version": "0.1.0",
-  "description": "Abstractions for keeping your workspaces & projects tidy",
+  "description": "Abstractions for keeping your workspaces & projects tidier",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest --coverage",
-    "build": "rimraf dist && tsc -b tsconfig.production.json"
+    "build": "rimraf dist && tsc -b tsconfig.production.json",
+    "terser": "terser"
   },
   "dependencies": {
     "change-case": "^4.1.2",
@@ -26,6 +27,7 @@
     "jest": "^27.0.6",
     "memfs": "^3.2.2",
     "rimraf": "^3.0.2",
+    "terser": "^5.7.1",
     "ts-jest": "^27.0.4",
     "typescript": "^4.3.5"
   }

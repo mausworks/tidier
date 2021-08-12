@@ -13,7 +13,7 @@ import {
   nearestConfig,
   parseNamePattern,
   readConfig,
-  TidyJSONConfig,
+  TidierJSONConfig,
 } from "./config";
 
 describe("parsing conventions", () => {
@@ -101,11 +101,13 @@ describe("finding the nearest config", () => {
   it("returns the starting path if it is the config file", async () => {
     await fc.assert(
       fc.asyncProperty(ap.folder(true), async (root) => {
-        seedVolume(root, ["tidy.config.json"], []);
+        seedVolume(root, ["tidier.config.json"], []);
 
-        const configPath = await nearestConfig(join(root, "tidy.config.json"));
+        const configPath = await nearestConfig(
+          join(root, "tidier.config.json")
+        );
 
-        expect(configPath).toBe(join(root, "tidy.config.json"));
+        expect(configPath).toBe(join(root, "tidier.config.json"));
       })
     );
   });
@@ -118,7 +120,7 @@ describe("finding the nearest config", () => {
         ap.folder(true),
         ap.folder(false, { minLength: levels, maxLength: levels }),
         async (root, startFolder) => {
-          seedVolume(root, ["tidy.config.json"], [startFolder]);
+          seedVolume(root, ["tidier.config.json"], [startFolder]);
 
           const configPath = await nearestConfig(
             join(root, startFolder),
@@ -137,14 +139,14 @@ describe("finding the nearest config", () => {
         ap.folder(true),
         ap.folder(),
         async (root, startPath) => {
-          seedVolume(root, ["tidy.config.json"], [startPath]);
+          seedVolume(root, ["tidier.config.json"], [startPath]);
 
           const configPath = await nearestConfig(
             join(root, startPath),
             Infinity
           );
 
-          expect(configPath).toBe(join(root, "tidy.config.json"));
+          expect(configPath).toBe(join(root, "tidier.config.json"));
         }
       )
     );
@@ -193,7 +195,7 @@ describe("checking if a config exists", () => {
   it("returns true if a config exists", async () => {
     await fc.assert(
       fc.asyncProperty(ap.folder(true), async (root) => {
-        seedVolume(root, ["tidy.config.json"], []);
+        seedVolume(root, ["tidier.config.json"], []);
 
         await expect(containsConfig(root)).resolves.toBe(true);
       })
@@ -213,8 +215,8 @@ describe("checking if a config exists", () => {
   it("returns false if config is not a file", async () => {
     await fc.assert(
       fc.asyncProperty(ap.folder(true), async (root) => {
-        // Make tidy.config.json a folder
-        seedVolume(root, [], ["tidy.config.json"]);
+        // Make tidier.config.json a folder
+        seedVolume(root, [], ["tidier.config.json"]);
 
         await expect(containsConfig(root)).resolves.toBe(false);
       })
@@ -226,16 +228,16 @@ describe("reading config off disk", () => {
   it("reads the config", async () => {
     await fc.assert(
       fc.asyncProperty(ap.folder(true), async (root) => {
-        const config: TidyJSONConfig = { files: {}, folders: {} };
+        const config: TidierJSONConfig = { files: {}, folders: {} };
 
         seedVolume(root, [], []);
         fs.writeFileSync(
-          join(root, "tidy.config.json"),
+          join(root, "tidier.config.json"),
           JSON.stringify(config)
         );
 
         await expect(
-          readConfig(join(root, "tidy.config.json"))
+          readConfig(join(root, "tidier.config.json"))
         ).resolves.toEqual(config);
       })
     );
