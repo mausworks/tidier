@@ -1,11 +1,11 @@
 import yargs from "yargs";
 
-import { tidy } from "./tidy";
+import { tidier } from "./tidier";
 
 export async function run() {
   const options = yargs(process.argv.slice(2))
-    .scriptName("tidy")
-    .usage("A CLI for keeping your projects tidy!")
+    .scriptName("tidier")
+    .usage("The workspace formatter")
     .options("write", {
       alias: "w",
       describe: "Write fixes to problems to the project.",
@@ -41,11 +41,11 @@ export async function run() {
       demandOption: false,
       describe:
         "Explicitly define the project folder.\n" +
-        "A 'tidy.config.json' file has to be located in (or above) this folder, " +
+        "A 'tidier.config.json' file has to be located in (or above) this folder, " +
         "or the '--config' has to be set. " +
-        "By default; this is the location of the resolved 'tidy.config.json'.",
+        "By default; this is the location of the resolved 'tidier.config.json'.",
     })
     .help().argv;
 
-  await tidy(options);
+  await tidier(options);
 }

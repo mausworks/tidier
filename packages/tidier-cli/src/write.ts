@@ -1,7 +1,7 @@
 import * as fs from "fs/promises";
 import { green, red } from "colors";
 import { basename, dirname, join } from "path";
-import { Project, rename } from "@tidy/lib";
+import { Project, rename } from "@tidier/lib";
 
 async function renameAll(type: "files" | "folders", project: Project) {
   // We need to keep track of these

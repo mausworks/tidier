@@ -4,7 +4,7 @@ import { Validator } from "jsonschema";
 
 import { EitherCasing, NameConvention, NameFormat } from "./convention";
 import { isExtensionCasing, validateCasing } from "./rename";
-import schema from "./tidy.config.schema.json";
+import schema from "./tidier.config.schema.json";
 
 /**
  * The rule-set in the JSON file consists of globs as keys,
@@ -12,8 +12,8 @@ import schema from "./tidy.config.schema.json";
  */
 export type NameRules = { [glob: string]: string };
 
-/** Describes the shape of the Tidy JSON configuration file. */
-export interface TidyJSONConfig {
+/** Describes the shape of the Tidier JSON configuration file. */
+export interface TidierJSONConfig {
   /** Files to ignore (other than from e.g .gitignore). */
   readonly ignore?: string[];
   /** File name conventions. */
@@ -22,8 +22,8 @@ export interface TidyJSONConfig {
   readonly folders: NameRules;
 }
 
-/** Describes the shape of the configuration used internally withing Tidy. */
-export interface TidyConfig {
+/** Describes the shape of the configuration used internally withing Tidier. */
+export interface TidierConfig {
   /** Glob patterns of what to exclude. */
   readonly ignore: string[];
   /** The naming conventions to use for files within the project. */
@@ -38,12 +38,12 @@ const validator = new Validator();
  * Reads the configuration file at the provided path.
  * @param path The path to read the config from: an absolute path.
  */
-export async function readConfig(path: string): Promise<TidyJSONConfig> {
+export async function readConfig(path: string): Promise<TidierJSONConfig> {
   const json = await fs.readFile(path, "utf-8").then(JSON.parse);
 
   validator.validate(json, schema, { throwError: true });
 
-  return json as TidyJSONConfig;
+  return json as TidierJSONConfig;
 }
 
 /**
@@ -93,13 +93,13 @@ export async function nearestConfig(
   const status = await fs.stat(path);
   const name = basename(path);
 
-  if (status.isFile() && name === "tidy.config.json") {
+  if (status.isFile() && name === "tidier.config.json") {
     return path;
   } else if (status.isDirectory()) {
     const entries = await fs.readdir(path, { withFileTypes: true });
 
     for (const entry of entries) {
-      if (entry.isFile() && entry.name === "tidy.config.json") {
+      if (entry.isFile() && entry.name === "tidier.config.json") {
         return join(path, entry.name);
       }
     }
@@ -116,7 +116,7 @@ export async function nearestConfig(
  */
 export async function containsConfig(root: string): Promise<boolean> {
   try {
-    const status = await fs.stat(join(root, "tidy.config.json"));
+    const status = await fs.stat(join(root, "tidier.config.json"));
 
     if (!status.isFile()) {
       throw new Error(`The config at '${root}' is not a file.`);
@@ -140,7 +140,7 @@ export const convertConfig = ({
   ignore = [],
   files,
   folders,
-}: TidyJSONConfig): TidyConfig => ({
+}: TidierJSONConfig): TidierConfig => ({
   ignore,
   folderConventions: parseConventions(folders),
   fileConventions: parseConventions(files),
