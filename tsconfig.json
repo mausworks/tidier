@@ -1,0 +1,7 @@
+{
+  "references": [
+    { "path": "./packages/tidier-lib" },
+    { "path": "./packages/tidier-cli" }
+  ],
+  "exclude": ["**/node_modules"]
+}

@@ -12,7 +12,7 @@
     "build": "rimraf dist && tsc"
   },
   "dependencies": {
-    "@tidier/lib": "file:../tidier-lib",
+    "@tidier/lib": "^0.1.0",
     "@types/colors": "^1.2.1",
     "colors": "^1.4.0",
     "yargs": "^17.0.1"

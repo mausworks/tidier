@@ -1,6 +1,9 @@
 {
+  "extends": "../../tsconfig.json",
+  "references": [{ "path": "../tidier-lib" }],
   "include": ["src"],
   "compilerOptions": {
+    "composite": true,
     "types": ["node", "jest"],
     "outDir": "dist",
     "declaration": true,

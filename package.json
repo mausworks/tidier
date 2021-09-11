@@ -2,16 +2,19 @@
   "private": true,
   "scripts": {
     "start": "concurrently 'yarn start:tidier' 'yarn start:lib' 'yarn start:cli'",
-    "start:lib": "cd packages/tidier-lib && yarn build -w",
-    "start:cli": "cd packages/tidier-cli && yarn build -w",
+    "start:lib": "yarn --cwd packages/tidier-lib build -w",
+    "start:cli": "yarn --cwd packages/tidier-cli build -w",
     "start:tidier": "packages/tidier-cli/tidier -Ww",
     "test:lib": "cd packages/tidier-lib && yarn test"
   },
-  "workspaces": [
-    "packages/tidier-lib",
-    "packages/tidier-cli",
-    "examples/react-typescript"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/@tidier/**"
+    ]
+  },
   "dependencies": {
     "concurrently": "^6.2.0"
   }

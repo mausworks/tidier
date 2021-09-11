@@ -1,10 +1,13 @@
 {
-  "include": ["src/**/*.ts"],
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*.ts", "src/.tidierrc.schema.json"],
   "compilerOptions": {
+    "rootDir": "src",
+    "composite": true,
     "module": "commonjs",
     "lib": ["es2019"],
     "types": ["node", "jest"],
-    "outDir": "dist/",
+    "outDir": "./dist/",
     "declaration": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
