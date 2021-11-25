@@ -7,13 +7,9 @@ https://user-images.githubusercontent.com/8259221/126910139-162c5e89-b2c7-403a-8
 Tidier currently supports two modes, "checking" and "writing", it is very much like other formatters or linters.
 Running `tidier -c` will check for problems in the project, and running `tidier -w` will write fixes to the project.
 
-Tidier also supports a watch mode (use `--watch` or `-W`). 
-When running in watch mode, Tidier will only look for new problems added to the project,
-it is not going to analyze the project or fix any preexisting problems.
-
 ## Configuration
 
-Create a `tidier.config.json` file at the root of your project.
+Create a `.tidierrc` at the root of your project.
 Here is an example which is made to work with most a React projects, 
 it should serve as a good baseline for whatever project you are currently working on.
 
