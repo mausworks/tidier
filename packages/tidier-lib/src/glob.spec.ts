@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { createGlob } from "./glob";
 
-import * as ap from "../test/arbitrary-paths";
+import * as ap from "./__arbitraries__/arbitrary-paths";
 
 const matches = {
   "*": ["foo", "bar", "baz", "bat"],

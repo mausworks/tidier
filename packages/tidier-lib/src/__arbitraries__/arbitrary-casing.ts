@@ -4,7 +4,7 @@ import {
   extensionCasings,
   generalAliases,
   GeneralAlias,
-} from "../src/convention";
+} from "../convention";
 
 export const general = () => fc.oneof(...generalCasings.map(fc.constant));
 
@@ -19,7 +19,7 @@ export const generalConvention = () => fc.array(general(), { minLength: 1 });
 
 export const generalAlias = (): fc.Arbitrary<GeneralAlias> =>
   fc.oneof(
-    ...Object.keys(generalAliases).map((a: GeneralAlias) => fc.constant(a))
+    ...Object.keys(generalAliases).map((a) => fc.constant(a as GeneralAlias))
   );
 
 export const fileConvention = () =>

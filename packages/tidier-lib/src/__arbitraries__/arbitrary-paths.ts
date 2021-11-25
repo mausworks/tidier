@@ -1,15 +1,13 @@
 import fc, { ArrayConstraints } from "fast-check";
 import { join } from "path";
 
-const charCodes = {
-  a: "a".charCodeAt(0),
-  z: "z".charCodeAt(0),
-};
+const CHAR_CODE_A = "a".charCodeAt(0);
+const CHAR_CODE_Z = "z".charCodeAt(0);
 
 export const fragmentChar = () =>
   fc
-    .nat(charCodes.z - charCodes.a - 1)
-    .map((value) => String.fromCharCode(charCodes.a + value + 1));
+    .nat(CHAR_CODE_Z - CHAR_CODE_A - 1)
+    .map((value) => String.fromCharCode(CHAR_CODE_A + value + 1));
 
 export const fragment = (minLength = 2, maxLength = 10) =>
   fc
@@ -23,6 +21,8 @@ export const folder = (
   fc
     .array(fragment(), { minLength, maxLength })
     .map((fragments) => (root ? "/" : "") + fragments.join("/"));
+
+export const folderName = () => fileName(1);
 
 export const fileName = (maxFragments = 2) =>
   fc

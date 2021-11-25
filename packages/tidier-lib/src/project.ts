@@ -1,172 +1,183 @@
-import { promises as fs } from "fs";
-import { resolve, join, relative } from "path";
-import ignore from "ignore";
+import { join } from "path";
+import ignore, { Ignore } from "ignore";
 
 import { NameConvention } from "./convention";
-import { containsConfig, TidierConfig } from "./config";
-import { createGlob, Glob } from "./glob";
+import { ProjectSettings } from "./config";
+import { Glob } from "./glob";
+import {
+  createProjectSettings,
+  parseConfig,
+  TIDIER_CONFIG_NAME,
+} from "./config";
+import { EntryType, Folder } from "./folder";
 
 /** Boy, you do not want to look in these ... */
 const ALWAYS_IGNORE = ["**/.git"];
 
-/**
- * A high level abstraction which allows you to handle
- * files and folders within the of the project,
- * as well as access configuration and conventions.
- */
-export interface Project {
-  /** Glob patterns for files to always exclude. */
-  readonly ignore: string[];
-  /** The naming conventions to use for files within the project. */
-  readonly fileConventions: readonly NameConvention[];
-  /** The naming conventions to use for folders within the project. */
-  readonly folderConventions: readonly NameConvention[];
+export class Project {
+  public readonly folder: Folder;
+
+  #fileConventions: readonly NameConvention[];
+  #folderConventions: readonly NameConvention[];
+  #ignore: Ignore;
+
+  constructor(folder: Folder, settings: ProjectSettings) {
+    this.folder = folder;
+    this.applySettings(settings);
+  }
+
   /**
-   * Resolve a path relative to the project,
-   * returning its absolute path.
+   * Loads a project from a folder where a `.tidierrc` is located.
+   * Also also loads the `.gitignore` if one exists at the root of the folder.
+   * @param folder The folder to load the project from.
    */
-  resolve(path: string): string;
+  public static async load(folder: Folder): Promise<Project> {
+    const settings = await loadProjectSettings(folder);
+
+    return new Project(folder, settings);
+  }
+
   /**
-   * Converts a path that is absolute,
-   * to relative to the project.
+   * Attempts to locate the nearest project to a given folder,
+   * by searching the provided folder and its parents for a `.tidierrc`.
+   * @param path The folder from which you want to search from.
+   * @param levels The maximum number of parents to search.
    */
-  relative(path: string): string;
-  /** Lists all folders in the project that matches the glob pattern. */
-  listFolders(glob: string): Promise<readonly string[]>;
-  /** Lists all files in the project that matches the glob pattern. */
-  listFiles(glob: string): Promise<readonly string[]>;
+  public static async near(
+    folder: Folder,
+    levels = 5
+  ): Promise<Project | null> {
+    if (levels === 0) {
+      return null;
+    }
+
+    const configType = await folder.entryType(TIDIER_CONFIG_NAME);
+
+    if (configType === "file") {
+      return Project.load(folder);
+    } else {
+      const parent = folder.parent();
+
+      if (parent) {
+        return Project.near(parent, --levels);
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Reloads the project settings.
+   * This is useful for when the config or .gitignore has been updated, and you want to reload it.
+   */
+  public async reload(): Promise<void> {
+    const settings = await loadProjectSettings(this.folder);
+    this.applySettings(settings);
+  }
+
+  /**
+   * Returns the naming convention for the given type and path.
+   * If the path is ignored, or if no convention is found, `null` is returned.
+   * @param type Whether to get a convention for a file or folder.
+   * @param path A path relative to the project root.
+   */
+  public getConvention(type: EntryType, path: string): NameConvention | null {
+    return this.getFromConventions(path, this.listConventions(type));
+  }
+
+  /**
+   * Lists all conventions by type.
+   * @param type `'file'` to get file conventions, `'folder'` to get folder conventions.
+   */
+  public listConventions(type: EntryType): readonly NameConvention[] {
+    if (type === "file") {
+      return this.#fileConventions;
+    } else if (type === "folder") {
+      return this.#folderConventions;
+    } else {
+      throw new Error(`Unknown type '${type}'. Expected 'file' for 'folder'.`);
+    }
+  }
+
+  /** Lists entries of the specified type matching the provided glob. */
+  public async list(type: EntryType, glob: Glob): Promise<readonly string[]> {
+    return await this.collect([], "./", glob, type);
+  }
+
   /** Returns whether the path is ignored within the project. */
-  ignores(path: string): boolean;
-  /** Returns true if the project contains this file, and it is not ignored. */
-  hasFile(path: string): Promise<boolean>;
-  /** Returns true if the project contains this file, and it is not ignored. */
-  hasFolder(path: string): Promise<boolean>;
+  public ignores(path: string): boolean {
+    return this.#ignore.ignores(path);
+  }
+
+  private applySettings(settings: ProjectSettings) {
+    this.#ignore = ignore({ ignorecase: true }).add(settings.ignore);
+    this.#fileConventions = settings.fileConventions;
+    this.#folderConventions = settings.folderConventions;
+  }
+
+  private async collect(
+    collected: string[],
+    folderPath: string,
+    glob: Glob,
+    filter: EntryType
+  ): Promise<string[]> {
+    const entries = await this.folder.list(folderPath);
+
+    for (const [name, type] of entries) {
+      const path = join(folderPath, name);
+
+      if (this.ignores(path)) {
+        continue;
+      }
+
+      if (type === "file" && filter === "file" && glob.matches(path)) {
+        collected.push(path);
+      } else if (type === "folder") {
+        const configPath = join(path, TIDIER_CONFIG_NAME);
+        const configType = await this.folder.entryType(configPath);
+
+        if (configType !== "file") {
+          if (filter === "folder" && glob.matches(path)) {
+            collected.push(path);
+          }
+
+          await this.collect(collected, path, glob, filter);
+        }
+      }
+    }
+
+    return collected;
+  }
+
+  private getFromConventions(
+    path: string,
+    conventions: readonly NameConvention[]
+  ) {
+    if (this.ignores(path)) {
+      return null;
+    } else {
+      return conventions.find(({ glob }) => glob.matches(path)) || null;
+    }
+  }
 }
 
-export async function readGitignore(root: string): Promise<readonly string[]> {
+async function loadProjectSettings(folder: Folder) {
+  const configData = await folder.readFile(TIDIER_CONFIG_NAME);
+  const { ignore = [], ...conventions } = parseConfig(configData);
+  const gitignore = await readGitignore(folder);
+  const allIgnores = [...ALWAYS_IGNORE, ...ignore, ...gitignore];
+
+  return createProjectSettings({ ...conventions, ignore: allIgnores });
+}
+
+export async function readGitignore(
+  folder: Folder
+): Promise<readonly string[]> {
   try {
-    const lines = await fs.readFile(join(root, ".gitignore"), "utf-8");
+    const lines = await folder.readFile(".gitignore", "utf-8");
 
     return lines.split("\n").filter((l) => l.trim() && !l.startsWith("#"));
   } catch {
     return [];
   }
-}
-
-async function validateProjectRoot(root: string): Promise<void> {
-  try {
-    const status = await fs.stat(root);
-
-    if (!status.isDirectory()) {
-      throw new Error(`Path '${root}' is not a folder.`);
-    }
-  } catch (error) {
-    throw new Error(`Could not create project: ${error.message}`);
-  }
-}
-
-export async function createProject(
-  root: string,
-  config: TidierConfig
-): Promise<Project> {
-  await validateProjectRoot(root);
-
-  /** Resolve the absolute path in the file system. */
-  const resolvePath = (path: string) => {
-    const resolved = resolve(root, path);
-
-    if (resolved.startsWith(root + "/") || resolved === root) {
-      return resolved;
-    } else {
-      throw new Error(
-        `The provided path '${path}' resolves to outside the root.`
-      );
-    }
-  };
-
-  /** Resolve a path, relative to the project. */
-  const relativePath = (path: string) => relative(root, path);
-
-  const gitignore = await readGitignore(root);
-
-  const ig = ignore({ ignorecase: true }).add([
-    ...ALWAYS_IGNORE,
-    ...gitignore,
-    ...config.ignore,
-  ]);
-
-  async function collect(
-    results: string[],
-    folder: string,
-    glob: Glob,
-    type: "file" | "folder"
-  ): Promise<string[]> {
-    const absolutePath = resolvePath(folder);
-    const entries = await fs.readdir(absolutePath, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const path = join(folder, entry.name);
-
-      if (ig.ignores(path)) {
-        continue;
-      }
-
-      if (type === "file" && entry.isFile() && glob.matches(path)) {
-        results.push(path);
-      } else if (entry.isDirectory()) {
-        const isAnotherProject = await containsConfig(resolvePath(path));
-
-        if (!isAnotherProject) {
-          if (type === "folder" && glob.matches(path)) {
-            results.push(path);
-          }
-
-          await collect(results, join(folder, entry.name), glob, type);
-        }
-      }
-    }
-
-    return results;
-  }
-
-  return {
-    ignore: config.ignore,
-    fileConventions: config.fileConventions,
-    folderConventions: config.folderConventions,
-    resolve: resolvePath,
-    relative: relativePath,
-    ignores: (path) => ig.ignores(path),
-    async listFiles(glob) {
-      return await collect([], "", createGlob(glob), "file");
-    },
-    async listFolders(glob) {
-      return await collect([], "", createGlob(glob), "folder");
-    },
-    async hasFile(path) {
-      if (ig.ignores(path)) {
-        return false;
-      } else {
-        try {
-          const status = await fs.stat(resolvePath(path));
-
-          return status.isFile();
-        } catch {
-          return false;
-        }
-      }
-    },
-    async hasFolder(path) {
-      if (ig.ignores(path)) {
-        return false;
-      } else {
-        try {
-          const status = await fs.stat(resolvePath(path));
-
-          return status.isDirectory();
-        } catch {
-          return false;
-        }
-      }
-    },
-  };
 }

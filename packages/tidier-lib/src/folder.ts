@@ -1,0 +1,137 @@
+import { Dirent } from "fs";
+import fs from "fs/promises";
+import { join, resolve, dirname, parse } from "path";
+
+export type EntryType = "file" | "folder";
+
+export type FolderEntry = readonly [string, EntryType];
+
+export interface Folder {
+  /** The location of the folder, an absolute path. */
+  readonly path: string;
+  /** Returns a child folder of the same type. */
+  child(path: string): Folder;
+  /** Returns the parent folder, or `null` if the folder does not have any parents. */
+  parent(): Folder | null;
+  /** Converts a relative path to an absolute path. */
+  absolute(path: string): string;
+  /** Converts an absolute path to a relative path. */
+  relative(path: string): string;
+  /** Lists all files and folders in the specified directory. */
+  list(path?: string): Promise<readonly FolderEntry[]>;
+  /**
+   * Gets the type of the entry at the specified path.
+   * Returns null if the entry does not exist.
+   */
+  entryType(path: string): Promise<EntryType | null>;
+  /** Reads the file at the path with the specified encoding */
+  readFile(path: string, encoding?: BufferEncoding): Promise<string>;
+}
+
+export class FileDirectory implements Folder {
+  readonly path: string;
+
+  /**
+   * Creates a new file directory with the specified root.
+   * If you need to ensure that the path exists and is a directory, use `resolve()` instead.
+   * @param path An absolute path to a directory.
+   */
+  constructor(path: string) {
+    this.path = path;
+  }
+
+  public static async resolve(root: string): Promise<Folder> {
+    const basePath = resolve(root);
+    const status = await fs.stat(basePath);
+
+    if (!status.isDirectory()) {
+      throw new Error(`The path '${root}' does not resolve to a directory.`);
+    }
+
+    return new FileDirectory(basePath);
+  }
+
+  absolute(path: string) {
+    return join(this.path, path);
+  }
+
+  relative(path: string) {
+    return disjoin(this.path, path);
+  }
+
+  child(path: string): Folder {
+    return new FileDirectory(this.absolute(path));
+  }
+
+  parent(): Folder | null {
+    // `dirname` returns the same path if we are at the root.
+    const parentPath = dirname(this.path);
+
+    return parentPath === this.path ? null : new FileDirectory(parentPath);
+  }
+
+  async entryType(path: string): Promise<EntryType | null> {
+    try {
+      const status = await fs.stat(this.absolute(path), {
+        throwIfNoEntry: false,
+      });
+
+      if (status?.isFile()) {
+        return "file";
+      } else if (status?.isDirectory()) {
+        return "folder";
+      } else {
+        return null;
+      }
+    } catch {
+      return null;
+    }
+  }
+
+  async list(path = "./"): Promise<readonly FolderEntry[]> {
+    const entries = await fs.readdir(this.absolute(path), {
+      withFileTypes: true,
+    });
+
+    return entries.filter(isFileOrFolder).map(toFolderEntry);
+  }
+
+  async readFile(
+    path: string,
+    encoding: BufferEncoding = "utf-8"
+  ): Promise<string> {
+    return await fs.readFile(this.absolute(path), encoding);
+  }
+}
+
+export const withTrailingSlash = (path: string) =>
+  path.endsWith("/") ? path : path + "/";
+
+export const withoutTrailingSlash = (path: string) =>
+  path.endsWith("/") ? path.substring(0, path.length - 1) : path;
+
+/**
+ * Gets a relative path from two overlapping absolute paths: the inverse of `join()`.
+ * If `path` is not a direct sub-path of `root`, an error is thrown.
+ *
+ * @param root The path you want to disjoin `path` from.
+ * @param name The path to disjoin.
+ */
+export function disjoin(root: string, path: string) {
+  root = withTrailingSlash(root);
+
+  if (path === root || withTrailingSlash(path) === root) {
+    return "";
+  } else if (path.startsWith(root)) {
+    return path.substr(root.length);
+  } else {
+    throw new Error(`The path '${path}' is not a subpath of '${root}'.`);
+  }
+}
+
+const isFileOrFolder = (entry: Dirent) => entry.isFile() || entry.isDirectory();
+
+const toFolderEntry = (entry: Dirent): FolderEntry => [
+  entry.name,
+  entry.isFile() ? "file" : "folder",
+];

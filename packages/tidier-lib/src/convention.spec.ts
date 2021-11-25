@@ -1,8 +1,8 @@
 import fc from "fast-check";
 
-import * as ac from "../test/arbitrary-casing";
+import * as ac from "./__arbitraries__/arbitrary-casing";
 import { resolveCasing } from "./convention";
-import { validateCasing } from "./rename";
+import { validateCasing } from "./recase";
 
 describe("resolving aliases", () => {
   test("general casings return themselves", () => {

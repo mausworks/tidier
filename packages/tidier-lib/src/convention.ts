@@ -1,3 +1,5 @@
+import { Glob } from "./glob";
+
 /** Describes the 'canon' general casings. */
 export const generalCasings = [
   "preserve",
@@ -40,10 +42,10 @@ export type GeneralAlias = keyof typeof generalAliases;
 /** Describes how each fragment of a name should be formatted. */
 export type NameFormat = (GeneralCasing | GeneralAlias)[];
 
-/** Describes which files should use what name format. */
+/** Describes which files or folders should use which name format. */
 export interface NameConvention {
   /** The glob pattern to match. */
-  readonly glob: string;
+  readonly glob: Glob;
   /**
    * The format of the name to use for the
    * files or folders that match the glob.
