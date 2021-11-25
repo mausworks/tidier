@@ -19,7 +19,7 @@ import {
 
 export type Recaser = (word: string) => string;
 
-export interface Rename {
+export interface Recasing {
   readonly name: string;
   readonly format: string;
 }
@@ -88,9 +88,9 @@ export const getExtensionCasing = (
  * @param name The name of the file or folder
  * @param format The file or folder format to apply
  */
-export function rename(name: string, format: NameFormat): string {
+export function recase(name: string, format: NameFormat): string {
   const frags = name.split(".");
-  const renamedParts: string[] = [];
+  const recasedFrags: string[] = [];
   const extensionCasing = getExtensionCasing(format);
 
   for (let i = 0; i < frags.length; i++) {
@@ -101,11 +101,11 @@ export function rename(name: string, format: NameFormat): string {
     if (!isExtension) {
       const casing = resolveCasing(getCasing(format, i));
 
-      renamedParts.push(recasers[casing](frag));
+      recasedFrags.push(recasers[casing](frag));
     } else {
-      renamedParts.push(recasers[extensionCasing!](frag));
+      recasedFrags.push(recasers[extensionCasing!](frag));
     }
   }
 
-  return renamedParts.join(".");
+  return recasedFrags.join(".");
 }

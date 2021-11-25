@@ -1,9 +1,9 @@
 import fc from "fast-check";
 
-import * as ac from "../test/arbitrary-casing";
-import * as ap from "../test/arbitrary-paths";
+import * as ac from "./__arbitraries__/arbitrary-casing";
+import * as ap from "./__arbitraries__/arbitrary-paths";
 import { parseNamePattern } from "./config";
-import { rename } from "./rename";
+import { recase } from "./recase";
 
 interface Expectation {
   readonly input: string;
@@ -35,7 +35,7 @@ test("expectations of renames", () => {
   for (const { input, format, output } of expectations) {
     const convention = parseNamePattern(format);
 
-    expect(rename(input, convention)).toBe(output);
+    expect(recase(input, convention)).toBe(output);
   }
 });
 
@@ -51,7 +51,7 @@ test("formats should match themselves", () => {
     fc.property(
       fc.oneof(ac.saneGeneralFormat(), ac.saneFileFormat()),
       (format) => {
-        expect(rename(format, parseNamePattern(format))).toBe(format);
+        expect(recase(format, parseNamePattern(format))).toBe(format);
       }
     )
   );
@@ -60,10 +60,10 @@ test("formats should match themselves", () => {
 test("that sPoNGEcAsE contains at least one upper case and lower case character", () => {
   fc.assert(
     fc.property(ap.fragment(10, 15), (name) => {
-      const newName = rename(name, ["sPoNGEcAsE"]);
+      const newName = recase(name, ["sPoNGEcAsE"]);
 
       expect(newName.split("").some((c) => c === c.toUpperCase()));
-      expect(newName.split("").some((c) => c === c.toLocaleLowerCase()));
+      expect(newName.split("").some((c) => c === c.toLowerCase()));
     })
   );
 });
