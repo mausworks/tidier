@@ -4,12 +4,18 @@
   "include": ["src"],
   "compilerOptions": {
     "composite": true,
+    "moduleResolution": "node",
+    "rootDir": "./src/",
+    "module": "commonjs",
+    "target": "ES2015",
+    "lib": ["es2019"],
     "types": ["node", "jest"],
-    "outDir": "dist",
+    "outDir": "./dist/",
     "declaration": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   }

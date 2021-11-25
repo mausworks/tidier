@@ -2,25 +2,16 @@
 export interface TidierProjectOptions {
   /**
    * The project root folder to use, relative to CWD.
-   * This path must either include a `tidier.config.json`,
+   * This directory must either include a tidier configuration file,
    * or a config has to be specified explicitly
    * with the config option.
    *
    * If a project root is not explicitly provided, it will be resolved
-   * from where the closest `tidier.config.json` file is located.
+   * from where the closest tidier configuration file is located.
    *
    * If a nearby root cannot be resolved, the application will err.
    */
   readonly project?: string;
-  /**
-   * Override the config in the project,
-   * or explicitly specify a configuration
-   * together with the project option.
-   *
-   * If a config in not explicitly provided, it will be resolved
-   * automatically once the project root is resolved.
-   */
-  readonly config?: string;
 }
 
 /** Actions that can be performed by the CLI. */

@@ -1,3 +1,4 @@
+import { TIDIER_CONFIG_NAME } from "@tidier/lib";
 import yargs from "yargs";
 
 import { tidier } from "./tidier";
@@ -20,32 +21,18 @@ export async function run() {
       default: false,
       type: "boolean",
     })
-    .options("watch", {
-      alias: "W",
-      desc: "Watch the project for changes, you can combine this with 'check' or 'write'.",
-      demandOption: false,
-      default: false,
-      type: "boolean",
-    })
-    .option("config", {
-      alias: "C",
-      demandOption: false,
-      type: "string",
-      describe:
-        "Explicitly define which config file to use.\n" +
-        "By default; this file is found by searching 'up' from the CWD.",
-    })
     .option("project", {
       alias: "P",
       type: "string",
       demandOption: false,
       describe:
         "Explicitly define the project folder.\n" +
-        "A 'tidier.config.json' file has to be located in (or above) this folder, " +
-        "or the '--config' has to be set. " +
-        "By default; this is the location of the resolved 'tidier.config.json'.",
+        `A '${TIDIER_CONFIG_NAME}' has to be located in (or above) this folder. ` +
+        `By default; this is the location of the nearest '${TIDIER_CONFIG_NAME}.`,
     })
     .help().argv;
 
   await tidier(options);
 }
+
+run();

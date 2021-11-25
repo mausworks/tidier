@@ -1,12 +1,13 @@
 import { red, green, black, bgGreen, bgRed } from "colors";
 import { basename, dirname, join } from "path";
 import {
-  rename,
-  Rename,
+  recase,
+  Recasing,
   Project,
   Changeset,
   immutableChangeset,
   Change,
+  EntryType,
 } from "@tidier/lib";
 import {
   formatRename,
@@ -15,28 +16,24 @@ import {
 } from "./output";
 
 export interface CheckSummary {
-  ok: Change<Rename>[];
-  problems: Record<string, Change<Rename>[]>;
+  ok: Change<Recasing>[];
+  problems: Record<string, Change<Recasing>[]>;
 }
 
 export async function checkNames(
-  type: "files" | "folder",
+  type: EntryType,
   project: Project
-): Promise<Changeset<Rename>> {
-  const changeset = immutableChangeset<Rename>();
-  const conventions =
-    type === "folder" ? project.folderConventions : project.fileConventions;
+): Promise<Changeset<Recasing>> {
+  const changeset = immutableChangeset<Recasing>();
+  const conventions = project.listConventions(type);
 
   for (const { glob, format } of conventions) {
-    const filePaths =
-      type === "files"
-        ? await project.listFiles(glob)
-        : await project.listFolders(glob);
+    const paths = await project.list(type, glob);
 
-    for (const path of filePaths) {
+    for (const path of paths) {
       const name = basename(path);
       const folder = dirname(path);
-      const newName = rename(name, format);
+      const newName = recase(name, format);
 
       changeset.add(join(folder, name), {
         name: newName,
@@ -48,7 +45,7 @@ export async function checkNames(
   return changeset;
 }
 
-export function summarizeResult(changes: Change<Rename>[]): CheckSummary {
+export function summarizeResult(changes: Change<Recasing>[]): CheckSummary {
   const checkSummary: CheckSummary = { ok: [], problems: {} };
 
   for (const [path, rename] of changes) {
@@ -69,8 +66,9 @@ export function summarizeResult(changes: Change<Rename>[]): CheckSummary {
   return checkSummary;
 }
 
-export async function check(project: Project) {
-  const fileRenames = await checkNames("files", project);
+export async function check(project: Project): Promise<number> {
+  let hasProblems = false;
+  const fileRenames = await checkNames("file", project);
   const folderRenames = await checkNames("folder", project);
   const changes = folderRenames.list().concat(fileRenames.list());
 
@@ -93,5 +91,9 @@ export async function check(project: Project) {
     for (const change of changes) {
       console.log(formatRename(change));
     }
+
+    hasProblems = true;
   }
+
+  return hasProblems ? 1 : 0;
 }

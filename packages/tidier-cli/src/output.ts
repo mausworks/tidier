@@ -1,9 +1,9 @@
-import { Change, Rename } from "@tidier/lib";
+import { Change, Recasing } from "@tidier/lib";
 import { bgGreen, bgRed, black, green, red } from "colors";
 import { basename, dirname } from "path";
 
 export function formatRename([path, rename]: Change<
-  Rename | undefined
+  Recasing | undefined
 >): string {
   const name = basename(path);
   const folder = dirname(path);
