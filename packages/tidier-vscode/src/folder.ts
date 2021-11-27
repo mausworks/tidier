@@ -32,6 +32,13 @@ export class VSCodeFolder implements Folder {
       : new VSCodeFolder(this.uri.with({ path: parentPath }));
   }
 
+  async rename(path: string, newPath: string): Promise<void> {
+    const uri = Uri.joinPath(this.uri, path);
+    const newUri = Uri.joinPath(this.uri, newPath);
+
+    await workspace.fs.rename(uri, newUri);
+  }
+
   async list(path?: string): Promise<readonly FolderEntry[]> {
     const uri = Uri.joinPath(this.uri, path ?? "/");
     const entries = await workspace.fs.readDirectory(uri);

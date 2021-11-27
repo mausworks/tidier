@@ -16,6 +16,13 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "tidier.fixAll",
+        "title": "Tidier: Fix all problems in workspace",
+        "shortTitle": "Tidier: Fix all"
+      }
+    ],
     "jsonValidation": [
       {
         "fileMatch": ".tidierrc",

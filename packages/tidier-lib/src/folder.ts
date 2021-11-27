@@ -19,6 +19,8 @@ export interface Folder {
   relative(path: string): string;
   /** Lists all files and folders in the specified directory. */
   list(path?: string): Promise<readonly FolderEntry[]>;
+
+  rename(path: string, newPath: string): Promise<void>;
   /**
    * Gets the type of the entry at the specified path.
    * Returns null if the entry does not exist.
@@ -68,6 +70,10 @@ export class FileDirectory implements Folder {
     const parentPath = dirname(this.path);
 
     return parentPath === this.path ? null : new FileDirectory(parentPath);
+  }
+
+  rename(path: string, newPath: string): Promise<void> {
+    return fs.rename(path, newPath);
   }
 
   async entryType(path: string): Promise<EntryType | null> {
