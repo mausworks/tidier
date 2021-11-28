@@ -10,16 +10,22 @@ import {
   TIDIER_CONFIG_NAME,
 } from "./config";
 import { EntryType, Folder } from "./folder";
+import { FolderEntry } from ".";
 
 /** Boy, you do not want to look in these ... */
 const ALWAYS_IGNORE = ["**/.git"];
 
+export type ProjectConventions = Record<EntryType, readonly NameConvention[]>;
+
 export class Project {
   public readonly folder: Folder;
 
-  #fileConventions: readonly NameConvention[];
-  #folderConventions: readonly NameConvention[];
+  #conventions: ProjectConventions;
   #ignore: Ignore;
+
+  public get conventions() {
+    return this.#conventions;
+  }
 
   constructor(folder: Folder, settings: ProjectSettings) {
     this.folder = folder;
@@ -82,26 +88,15 @@ export class Project {
    * @param path A path relative to the project root.
    */
   public getConvention(type: EntryType, path: string): NameConvention | null {
-    return this.getFromConventions(path, this.listConventions(type));
-  }
-
-  /**
-   * Lists all conventions by type.
-   * @param type `'file'` to get file conventions, `'folder'` to get folder conventions.
-   */
-  public listConventions(type: EntryType): readonly NameConvention[] {
-    if (type === "file") {
-      return this.#fileConventions;
-    } else if (type === "folder") {
-      return this.#folderConventions;
-    } else {
-      throw new Error(`Unknown type '${type}'. Expected 'file' for 'folder'.`);
-    }
+    return this.getFromConventions(path, this.#conventions[type]);
   }
 
   /** Lists entries of the specified type matching the provided glob. */
-  public async list(type: EntryType, glob: Glob): Promise<readonly string[]> {
-    return await this.collect([], "./", glob, type);
+  public async list(
+    glob: Glob,
+    entryType?: EntryType
+  ): Promise<readonly FolderEntry[]> {
+    return await this.collect([], "./", glob, entryType);
   }
 
   /** Returns whether the path is ignored within the project. */
@@ -111,17 +106,21 @@ export class Project {
 
   private applySettings(settings: ProjectSettings) {
     this.#ignore = ignore({ ignorecase: true }).add(settings.ignore);
-    this.#fileConventions = settings.fileConventions;
-    this.#folderConventions = settings.folderConventions;
+    this.#conventions = {
+      file: settings.fileConventions,
+      folder: settings.folderConventions,
+    };
   }
 
   private async collect(
-    collected: string[],
+    collected: FolderEntry[],
     folderPath: string,
     glob: Glob,
-    filter: EntryType
-  ): Promise<string[]> {
+    filter?: EntryType
+  ): Promise<readonly FolderEntry[]> {
     const entries = await this.folder.list(folderPath);
+    const includeFiles = !filter || filter === "file";
+    const includeFolders = !filter || filter === "folder";
 
     for (const [name, type] of entries) {
       const path = join(folderPath, name);
@@ -130,15 +129,15 @@ export class Project {
         continue;
       }
 
-      if (type === "file" && filter === "file" && glob.matches(path)) {
-        collected.push(path);
+      if (includeFiles && type === "file" && glob.matches(path)) {
+        collected.push([path, type]);
       } else if (type === "folder") {
         const configPath = join(path, TIDIER_CONFIG_NAME);
         const configType = await this.folder.entryType(configPath);
 
         if (configType !== "file") {
-          if (filter === "folder" && glob.matches(path)) {
-            collected.push(path);
+          if (includeFolders && glob.matches(path)) {
+            collected.push([path, type]);
           }
 
           await this.collect(collected, path, glob, filter);

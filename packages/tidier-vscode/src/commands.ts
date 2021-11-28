@@ -1,31 +1,78 @@
-import { createGlob, EntryType, recase, Project, Projects } from "@tidier/lib";
+import {
+  createGlob,
+  EntryType,
+  recase,
+  Project,
+  Projects,
+  NameConvention,
+  FolderEntry,
+  Folder,
+} from "@tidier/lib";
 import * as output from "./output";
-import { commands, ExtensionContext } from "vscode";
+import { commands } from "vscode";
 import { basename, dirname, join } from "path";
 
+const matchAnything = createGlob("*/**");
+
 function registerCommands(projects: Projects) {
-  commands.registerCommand("tidier.fixAll", () => fixAll(projects));
+  commands.registerCommand("tidier.fixAll", async () => await fixAll(projects));
+  commands.registerCommand(
+    "tidier.fixFiles",
+    async () => await fixType(projects, "file")
+  );
+  commands.registerCommand(
+    "tidier.fixFolders",
+    async () => await fixType(projects, "folder")
+  );
 }
 
-async function fixAll(projects: Projects) {
-  const matchAnything = createGlob("**/*");
+const groupByType = (
+  entries: readonly FolderEntry[]
+): Record<EntryType, readonly string[]> => {
+  const paths: Record<EntryType, string[]> = {
+    file: [],
+    folder: [],
+  };
 
+  for (const [path, type] of entries) {
+    paths[type].push(path);
+  }
+
+  return paths;
+};
+
+async function fixType(projects: Projects, type: EntryType) {
   for (const project of projects.list()) {
-    project.list("file", matchAnything);
+    const entries = await project.list(matchAnything, type);
+    const paths = entries.map(([path]) => path);
+    const conventions = project.conventions[type];
+
+    await recaseAll(project, paths, conventions);
   }
 }
 
-async function renameAll(type: EntryType, project: Project) {
+async function fixAll(projects: Projects) {
+  for (const project of projects.list()) {
+    const entries = await project.list(matchAnything);
+    const paths = groupByType(entries);
+
+    await recaseAll(project, paths.file, project.conventions.file);
+    await recaseAll(project, paths.folder, project.conventions.folder);
+  }
+}
+
+async function recaseAll(
+  project: Project,
+  paths: readonly string[],
+  conventions: readonly NameConvention[]
+) {
   // We need to keep track of these
   // Because multiple patterns might match,
   // but it's the first pattern that matters
   const seenPaths = new Set<string>();
-  const conventions = project.listConventions(type);
 
   for (const { glob, format } of conventions) {
-    const paths = await project.list(type, glob);
-
-    for (const path of paths) {
+    for (const path of paths.filter(glob.matches)) {
       if (seenPaths.has(path)) {
         continue;
       }
