@@ -1,8 +1,14 @@
 {
-  "name": "tidier-vscode",
+  "name": "tidier",
   "displayName": "Tidier",
   "icon": "logo.png",
-  "description": "The workspace formatter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mausworks/tidier",
+    "directory": "packages/tidier-vscode/"
+  },
+  "publisher": "mausworks",
+  "description": "The project formatter",
   "version": "0.1.0",
   "engines": {
     "vscode": "^1.59.0"
@@ -17,6 +23,44 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Tidier",
+      "properties": {
+        "tidier.fixes.enabled": {
+          "description": "Determines which fixes are automatically applied.",
+          "type": "string",
+          "enum": [
+            "all",
+            "files",
+            "folders",
+            "none"
+          ],
+          "default": "all"
+        },
+        "tidier.problems.enabled": {
+          "type": "string",
+          "enum": [
+            "all",
+            "files",
+            "folders",
+            "none"
+          ],
+          "description": "Determines which problems are displayed in the problems pane.",
+          "default": "all"
+        },
+        "tidier.problems.severity": {
+          "type": "string",
+          "default": "information",
+          "description": "Determines the severity of problems in the problems pane.",
+          "enum": [
+            "information",
+            "hint",
+            "warning",
+            "error"
+          ]
+        }
+      }
+    },
     "commands": [
       {
         "command": "tidier.scan",
