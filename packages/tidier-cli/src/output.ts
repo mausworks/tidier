@@ -1,18 +1,11 @@
-import { ProblemDetails, Recasing } from "@tidier/lib";
 import { bgGreen, bgRed, black, green, red } from "colors";
 import { basename, dirname } from "path";
 
-export function formatRename([path, rename]: ProblemDetails<
-  Recasing | undefined
->): string {
+export function formatRecase(path: string, newName: string): string {
   const name = basename(path);
   const folder = dirname(path);
 
-  if (rename && name !== rename.name) {
-    return `${folder}/${red(name)} ⟶  ${green(rename.name)}`;
-  } else {
-    return `${folder}/${green(name)}`;
-  }
+  return `${folder}/${red(name)} ⟶  ${green(newName)}`;
 }
 
 export function useConventionBanner(namePattern: string): string {

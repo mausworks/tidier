@@ -1,101 +1,21 @@
-import { red, green, black, bgGreen, bgRed } from "colors";
-import { basename, dirname, join } from "path";
+import { Project, Problem, scan, Glob } from "@tidier/lib";
 import {
-  recase,
-  Recasing,
-  Project,
-  Problems,
-  problemList,
-  ProblemDetails,
-  EntryType,
-} from "@tidier/lib";
-import {
-  formatRename,
+  formatRecase,
   okConventionBanner,
   useConventionBanner,
 } from "./output";
 
 export interface CheckSummary {
-  ok: ProblemDetails<Recasing>[];
-  problems: Record<string, ProblemDetails<Recasing>[]>;
-}
-
-export async function checkNames(
-  type: EntryType,
-  project: Project
-): Promise<Problems<Recasing>> {
-  const changeset = problemList<Recasing>();
-  const conventions = project.listConventions(type);
-
-  for (const { glob, format } of conventions) {
-    const paths = await project.list(type, glob);
-
-    for (const path of paths) {
-      const name = basename(path);
-      const folder = dirname(path);
-      const newName = recase(name, format);
-
-      changeset.add(join(folder, name), {
-        name: newName,
-        format: format.join("."),
-      });
-    }
-  }
-
-  return changeset;
-}
-
-export function summarizeResult(
-  changes: ProblemDetails<Recasing>[]
-): CheckSummary {
-  const checkSummary: CheckSummary = { ok: [], problems: {} };
-
-  for (const [path, rename] of changes) {
-    const folder = dirname(path);
-
-    if (join(folder, rename.name) !== path) {
-      checkSummary.problems[rename.format] = [
-        ...(checkSummary.problems[rename.format] || []),
-        [path, rename],
-      ];
-    } else {
-      checkSummary.ok.push([path, rename]);
-    }
-  }
-
-  checkSummary.ok = checkSummary.ok.sort((l, r) => l[0].localeCompare(r[0]));
-
-  return checkSummary;
+  ok: string[];
+  problems: Problem[];
 }
 
 export async function check(project: Project): Promise<number> {
-  let hasProblems = false;
-  const fileRenames = await checkNames("file", project);
-  const folderRenames = await checkNames("folder", project);
-  const changes = folderRenames.list().concat(fileRenames.list());
+  const problems = await scan(project, Glob.ANYTHING);
 
-  const summary = summarizeResult(changes);
-
-  console.log();
-  console.log(okConventionBanner());
-
-  for (const [path] of summary.ok) {
-    const name = basename(path);
-    const folder = dirname(path);
-
-    console.log(`${folder}/${green(name)}`);
+  for (const [path, { expectedName, format }] of problems) {
+    console.log(formatRecase(path, expectedName) + ` [${format.join(".")}]`);
   }
 
-  for (const [namePattern, changes] of Object.entries(summary.problems)) {
-    console.log();
-    console.log(useConventionBanner(namePattern));
-
-    for (const change of changes) {
-      console.log(formatRename(change));
-    }
-
-    hasProblems = true;
-  }
-
-  return hasProblems ? 1 : 0;
+  return problems.length ? 1 : 0;
 }
