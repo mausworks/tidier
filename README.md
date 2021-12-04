@@ -1,11 +1,8 @@
 # Tidier - The workspace formatter
 
-Tidier helps you keep your projects & workspaces clean by renaming files to stay on convention.
+Tidier helps you keep your projects & workspaces clean automatically renaming files to keep a consistent format
 
 https://user-images.githubusercontent.com/8259221/126910139-162c5e89-b2c7-403a-8c9d-0091a229fe0d.mp4
-
-Tidier currently supports two modes, "checking" and "writing", it is very much like other formatters or linters.
-Running `tidier -c` will check for problems in the project, and running `tidier -w` will write fixes to the project.
 
 ## Configuration
 
@@ -63,8 +60,8 @@ UPPER CASE -> README.MD
 ```
 
 If you want to change the extension to use lower case
-then you can specify `UPPER CASE.lc` as the name convention instead; 
-`lc` is an _extension casing_ (it means "lower case") and it is only applied to the _extension fragment_.
+then you can specify `UPPER CASE.lc` as the name format instead; 
+`lc` is an _extension casing_ (lc = "lower case") and it is only applied to the _extension fragment_.
 This means that all fragments leading up to the extension, will still be in upper case.
 
 ```
@@ -84,12 +81,12 @@ The extension casing can only be used _once_ within the name format,
 and it always has to be the last fragment of the convention as well.
 
 You can of course use the extension format together with multiple general formats,
-here are a few more "nuanced" examples:
+here are a few more nuanced examples:
 
 ```
-PascalCase.kebab-case.lc    -> README.md, Some.longer.file-name.txt
-Title Case.COBOL-CASE.UC    -> README.MD, Some.LONGER.FILE-NAME.txt
-snake_case.UPPER_SNAKE_CASE -> readme.MD, some.LONGER.FILE_NAME.TXT
+PascalCase.kebab-case.lc    -> Readme.md, App.spec.ts, App.en.spec.ts
+Title Case.COBOL-CASE.UC    -> Readme.MD, Old School Document.VERY-IMPORTANT.TXT
+snake_case.UPPER_SNAKE_CASE -> readme.MD, why_anybody.WOULD_USE_THIS.FORMAT.IS_BEYOND.ME
 Title Case.sPoNGEcAsE.Tc    -> Readme.Md, Some.lOnGEr.fIlE nAMe.Txt *
 ```
 
