@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { checkAndReport } from "./check";
 import { TidierCLIOptions } from "./options";
 import { projectFromOptions } from "./project";
 import { write } from "./write";
@@ -7,7 +7,7 @@ export async function tidier(options: TidierCLIOptions) {
   const project = await projectFromOptions(options);
 
   if (options.check) {
-    const exitCode = await check(project);
+    const exitCode = await checkAndReport(project);
     process.exit(exitCode);
   } else if (options.write) {
     await write(project);

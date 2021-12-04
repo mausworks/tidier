@@ -1,9 +1,9 @@
 import { dirname, join } from "path";
-import { Glob, Project, scan } from "@tidier/lib";
+import { Project, check } from "@tidier/lib";
 import { formatRecase } from "./output";
 
 export async function write(project: Project) {
-  const problems = await scan(project, Glob.ANYTHING);
+  const problems = await check(project);
 
   for (const [path, { expectedName, format }] of problems) {
     const newPath = join(dirname(path), expectedName);

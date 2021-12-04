@@ -1,17 +1,13 @@
-import { Project, Problem, scan, Glob } from "@tidier/lib";
-import {
-  formatRecase,
-  okConventionBanner,
-  useConventionBanner,
-} from "./output";
+import { Project, Problem, check } from "@tidier/lib";
+import { formatRecase } from "./output";
 
 export interface CheckSummary {
   ok: string[];
   problems: Problem[];
 }
 
-export async function check(project: Project): Promise<number> {
-  const problems = await scan(project, Glob.ANYTHING);
+export async function checkAndReport(project: Project): Promise<number> {
+  const problems = await check(project);
 
   for (const [path, { expectedName, format }] of problems) {
     console.log(formatRecase(path, expectedName) + ` [${format.join(".")}]`);
