@@ -4,9 +4,9 @@ import {
   recase,
   Recasing,
   Project,
-  Changeset,
-  immutableChangeset,
-  Change,
+  Problems,
+  problemList,
+  ProblemDetails,
   EntryType,
 } from "@tidier/lib";
 import {
@@ -16,15 +16,15 @@ import {
 } from "./output";
 
 export interface CheckSummary {
-  ok: Change<Recasing>[];
-  problems: Record<string, Change<Recasing>[]>;
+  ok: ProblemDetails<Recasing>[];
+  problems: Record<string, ProblemDetails<Recasing>[]>;
 }
 
 export async function checkNames(
   type: EntryType,
   project: Project
-): Promise<Changeset<Recasing>> {
-  const changeset = immutableChangeset<Recasing>();
+): Promise<Problems<Recasing>> {
+  const changeset = problemList<Recasing>();
   const conventions = project.listConventions(type);
 
   for (const { glob, format } of conventions) {
@@ -45,7 +45,9 @@ export async function checkNames(
   return changeset;
 }
 
-export function summarizeResult(changes: Change<Recasing>[]): CheckSummary {
+export function summarizeResult(
+  changes: ProblemDetails<Recasing>[]
+): CheckSummary {
   const checkSummary: CheckSummary = { ok: [], problems: {} };
 
   for (const [path, rename] of changes) {

@@ -1,5 +1,5 @@
 import { disjoin, EntryType, Folder, FolderEntry } from "@tidier/lib";
-import { dirname, join, relative } from "path";
+import { dirname, join } from "path";
 import { FileType, Uri, workspace } from "vscode";
 
 export class VSCodeFolder implements Folder {

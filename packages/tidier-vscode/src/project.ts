@@ -4,6 +4,7 @@ import { showErrorDialog } from "./ui";
 import * as output from "./output";
 import { Uri, WorkspaceFolder } from "vscode";
 import { VSCodeFolder } from "./folder";
+import { TidierContext } from "./context";
 
 export async function discoverProjectsInWorkspace(
   projects: Projects,
@@ -30,11 +31,12 @@ export async function discoverProjectsInWorkspace(
   projects.list().forEach((project) => output.log(" - " + project.folder.path));
 }
 
-export async function handleLoadProject(projects: Projects, uri: Uri) {
+export async function handleLoadProject(tidier: TidierContext, uri: Uri) {
   try {
     const folder = new VSCodeFolder(uri);
     const project = await Project.load(folder);
-    projects.add(project);
+    tidier.projects.add(project);
+    tidier.scan(project);
 
     output.log(`Included project at ${project.folder.path}.`);
   } catch (error) {
@@ -45,14 +47,18 @@ export async function handleLoadProject(projects: Projects, uri: Uri) {
   }
 }
 
-export async function handleProjectReload(project: Project) {
+export async function handleProjectReload(
+  tidier: TidierContext,
+  project: Project
+) {
   try {
     await project.reload();
+    await tidier.scan(project);
     output.log(`Reloaded project at ${project.folder.path}`);
   } catch (error) {
     const name = basename(project.folder.path);
 
-    showErrorDialog(`Tidier: Failed to reload project '${name}''`);
+    showErrorDialog(`Tidier: Failed to reload project '${name}'.`);
     output.log(`Failed to reload project at ${project.folder.path}.`);
     output.log(String(error));
   }

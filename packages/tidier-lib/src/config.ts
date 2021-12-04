@@ -2,7 +2,7 @@ import { Validator } from "jsonschema";
 
 import { EitherCasing, NameConvention, NameFormat } from "./convention";
 import { isExtensionCasing, validateCasing } from "./recase";
-import { createGlob } from "./glob";
+import { Glob } from "./glob";
 
 import schema from "./.tidierrc.schema.json";
 
@@ -82,7 +82,7 @@ export function parseNamePattern(namePattern: string): NameFormat {
 
 const parseConventions = (rules: NameRules): NameConvention[] =>
   Object.entries(rules).map(([glob, format]) => ({
-    glob: createGlob(glob),
+    glob: new Glob(glob),
     format: parseNamePattern(format),
   }));
 

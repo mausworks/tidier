@@ -18,6 +18,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "tidier.scan",
+        "title": "Tidier: Scan all projects in workspace",
+        "shortTitle": "Tidier: Scan"
+      },
+      {
         "command": "tidier.fixAll",
         "title": "Tidier: Fix all problems in workspace",
         "shortTitle": "Tidier: Fix all"

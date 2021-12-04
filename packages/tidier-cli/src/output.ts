@@ -1,8 +1,8 @@
-import { Change, Recasing } from "@tidier/lib";
+import { ProblemDetails, Recasing } from "@tidier/lib";
 import { bgGreen, bgRed, black, green, red } from "colors";
 import { basename, dirname } from "path";
 
-export function formatRename([path, rename]: Change<
+export function formatRename([path, rename]: ProblemDetails<
   Recasing | undefined
 >): string {
   const name = basename(path);

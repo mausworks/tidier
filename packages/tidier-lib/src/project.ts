@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join, basename, dirname } from "path";
 import ignore, { Ignore } from "ignore";
 
 import { NameConvention } from "./convention";
@@ -10,7 +10,7 @@ import {
   TIDIER_CONFIG_NAME,
 } from "./config";
 import { EntryType, Folder } from "./folder";
-import { FolderEntry } from ".";
+import { FolderEntry, Problem } from ".";
 
 /** Boy, you do not want to look in these ... */
 const ALWAYS_IGNORE = ["**/.git"];

@@ -11,6 +11,8 @@ import {
   FileRenameEvent,
   TextDocument,
 } from "vscode";
+import { registerCommands } from "./commands";
+import { TidierContext } from "./context";
 import { VSCodeFolder } from "./folder";
 import * as output from "./output";
 import {
@@ -18,9 +20,10 @@ import {
   handleLoadProject,
   discoverProjectsInWorkspace,
 } from "./project";
+import { showProblemsDetectedDialog } from "./ui";
 
 const disposables: Disposable[] = [];
-const projects = new Projects();
+const tidier = new TidierContext(new Projects());
 
 process.on("unhandledRejection", (err) => output.log(String(err)));
 
@@ -33,8 +36,18 @@ export async function activate(_: ExtensionContext) {
   disposables.push(workspace.onDidCreateFiles(onCreateFile));
   disposables.push(workspace.onDidRenameFiles(onRenameFile));
 
+  registerCommands(tidier);
+
   if (workspace.workspaceFolders) {
-    await discoverProjectsInWorkspace(projects, workspace.workspaceFolders);
+    await discoverProjectsInWorkspace(
+      tidier.projects,
+      workspace.workspaceFolders
+    );
+    const projects = await tidier.scan();
+
+    for (const project of projects) {
+      showProblemsDetectedDialog(tidier, project);
+    }
   }
 }
 
@@ -46,7 +59,7 @@ export function deactivate() {
 }
 
 async function getConvention(path: string) {
-  const project = projects.bestMatch(path);
+  const project = tidier.projects.bestMatch(path);
 
   if (project) {
     const relative = project.folder.relative(path);
@@ -94,7 +107,7 @@ async function onCreateFile(event: FileCreateEvent) {
       const folder = new VSCodeFolder(folderUri);
       const project = await Project.load(folder);
 
-      projects.add(project);
+      tidier.projects.add(project);
     } else {
       workspace.applyEdit(await createRenameEdit(uri));
     }
@@ -112,14 +125,14 @@ async function onSaveFile({ uri }: TextDocument) {
 
   if (name === TIDIER_CONFIG_NAME || name === ".gitignore") {
     const folderPath = dirname(uri.path);
-    const project = projects.find(folderPath);
+    const project = tidier.projects.find(folderPath);
 
     if (project) {
-      await handleProjectReload(project);
+      await handleProjectReload(tidier, project);
     } else if (name !== ".gitignore") {
       const folderUri = uri.with({ path: folderPath });
 
-      await handleLoadProject(projects, folderUri);
+      await handleLoadProject(tidier, folderUri);
     }
   }
 }
@@ -129,17 +142,17 @@ async function onDeleteFile({ files }: FileDeleteEvent) {
     const name = basename(file.path);
 
     if (name === TIDIER_CONFIG_NAME) {
-      const project = projects.bestMatch(file.path);
+      const project = tidier.projects.bestMatch(file.path);
 
       if (project) {
-        projects.remove(project.folder.path);
+        tidier.projects.remove(project.folder.path);
         output.log(`Unloaded project at '${project.folder.path}'.`);
       }
     } else if (name === ".gitignore") {
-      const project = projects.bestMatch(file.path);
+      const project = tidier.projects.bestMatch(file.path);
 
       if (project) {
-        await handleProjectReload(project);
+        await handleProjectReload(tidier, project);
       }
     }
   }
