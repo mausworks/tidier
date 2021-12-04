@@ -1,6 +1,7 @@
 {
   "name": "tidier-vscode",
-  "displayName": "Tidier VSCode",
+  "displayName": "Tidier",
+  "icon": "logo.png",
   "description": "The workspace formatter",
   "version": "0.1.0",
   "engines": {
