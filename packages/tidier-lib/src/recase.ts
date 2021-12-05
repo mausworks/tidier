@@ -84,27 +84,66 @@ export const getExtensionCasing = (
     : null;
 
 /**
+ * Constitutes a set of leading or trailing characters,
+ * these characters are to ignored when recasing if they are either leading or trailing.
+ */
+export const borderCharacters: readonly string[] = ["_", "[", "]", "(", ")"];
+
+const isBorderChar = (char: string) => borderCharacters.includes(char);
+
+function getLeading(fragment: string) {
+  let leading = "";
+  let i = 0;
+
+  while (isBorderChar(fragment[i])) {
+    leading = leading + fragment[i];
+    i++;
+  }
+
+  return leading;
+}
+
+function getTrailing(fragment: string) {
+  let trailing = "";
+  let i = fragment.length - 1;
+
+  while (isBorderChar(fragment[i])) {
+    trailing = fragment[i] + trailing;
+    i--;
+  }
+
+  return trailing;
+}
+
+const omitBorders = (leading: string, fragment: string, trailing: string) =>
+  fragment.substr(
+    leading.length,
+    fragment.length - leading.length - trailing.length
+  );
+
+/**
  * Converts the case of a file or folder name.
  * @param name The name of the file or folder
  * @param format The file or folder format to apply
  */
 export function recase(name: string, format: NameFormat): string {
-  const frags = name.split(".");
+  const fragments = name.split(".");
   const recasedFrags: string[] = [];
   const extensionCasing = getExtensionCasing(format);
 
-  for (let i = 0; i < frags.length; i++) {
+  for (let i = 0; i < fragments.length; i++) {
     const isExtension =
-      !!extensionCasing && frags.length > 1 && i === frags.length - 1;
-    const frag = frags[i];
+      !!extensionCasing && fragments.length > 1 && i === fragments.length - 1;
+    const fragment = fragments[i];
+    const leading = getLeading(fragment);
+    const trailing = getTrailing(fragment);
+    const word = omitBorders(leading, fragment, trailing);
 
-    if (!isExtension) {
-      const casing = resolveCasing(getCasing(format, i));
+    const recaseFn = isExtension
+      ? recasers[extensionCasing]
+      : recasers[resolveCasing(getCasing(format, i))];
 
-      recasedFrags.push(recasers[casing](frag));
-    } else {
-      recasedFrags.push(recasers[extensionCasing!](frag));
-    }
+    recasedFrags.push(leading + recaseFn(word) + trailing);
   }
 
   return recasedFrags.join(".");

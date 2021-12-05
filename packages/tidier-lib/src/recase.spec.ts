@@ -29,6 +29,13 @@ const expectations: Expectation[] = [
     format: "PascalCase.kebab-case.lc",
     output: "SomeFile.test.tsx",
   },
+  { input: "[slug].tsx", format: "kebab-case.lc", output: "[slug].tsx" },
+  { input: "[slug].tsx", format: "UPPER CASE.lc", output: "[SLUG].tsx" },
+  {
+    input: "[_(_slug_)]__.tsx",
+    format: "UPPER CASE.lc",
+    output: "[_(_SLUG_)]__.tsx",
+  },
 ];
 
 test("expectations of renames", () => {
