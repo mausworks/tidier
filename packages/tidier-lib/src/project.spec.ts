@@ -14,16 +14,12 @@ import {
 } from "./config";
 import { FileDirectory } from "./folder";
 import { Project } from "./project";
-import { createGlob } from ".";
+import { Glob } from "./glob";
 
 const basicJSONConfig: TidierConfig = {
   ignore: [],
-  files: {
-    "**/*": "kebab-case.lc",
-  },
-  folders: {
-    "**/*": "kebab-case",
-  },
+  files: { "**/*": "kebab-case.lc" },
+  folders: { "**/*": "kebab-case" },
 };
 
 const basicSettings: ProjectSettings = createProjectSettings(basicJSONConfig);
@@ -100,10 +96,12 @@ describe("listing", () => {
           const root = await FileDirectory.resolve(rootPath);
 
           const project = new Project(root, { ...basicSettings, ignore });
-          const paths = await project.list("file", createGlob("**/*"));
+          const entries = await project.list(Glob.ANYTHING, "file");
 
           for (const file of files) {
-            expect(paths.includes(file)).toBe(!ignore.includes(file));
+            expect(entries.map(([path]) => path).includes(file)).toBe(
+              !ignore.includes(file)
+            );
           }
         }
       )
@@ -114,18 +112,37 @@ describe("listing", () => {
     await fc.assert(
       fc.asyncProperty(
         ap.folder(true),
-        fc.set(ap.folder(), { minLength: 2 }),
+        fc.set(ap.folder(false, { maxLength: 1 }), {
+          minLength: 2,
+          maxLength: 2,
+        }),
         async (rootPath, folders) => {
           seedVolume(rootPath, [], folders);
 
-          const ignore = folders.slice(0, folders.length / 2);
+          const ignore = folders.slice(0, Math.floor(folders.length / 2));
           const root = await FileDirectory.resolve(rootPath);
 
           const project = new Project(root, { ...basicSettings, ignore });
-          const paths = await project.list("folder", createGlob("**/*"));
+          const entries = await project.list(Glob.ANYTHING, "folder");
+          const paths = entries.map(([path]) => path);
 
-          for (const folder of folders) {
-            expect(paths.includes(folder)).toBe(!ignore.includes(folder));
+          try {
+            for (const folder of folders) {
+              expect(paths.includes(folder)).toBe(!ignore.includes(folder));
+            }
+          } catch (error) {
+            console.log(
+              "root",
+              rootPath,
+              "folders",
+              folders,
+              "paths",
+              paths,
+              "ignore",
+              ignore
+            );
+
+            throw error;
           }
         }
       )
@@ -145,9 +162,9 @@ describe("listing", () => {
 
           const root = await FileDirectory.resolve(rootPath);
           const project = new Project(root, basicSettings);
-          const paths = await project.list("folder", createGlob("**/*"));
+          const entries = await project.list(Glob.ANYTHING, "folder");
 
-          expect(paths.includes(otherRoot)).toBe(false);
+          expect(entries.map(([path]) => path).includes(otherRoot)).toBe(false);
         }
       )
     );
