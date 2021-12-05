@@ -14,8 +14,12 @@ export class Glob {
    * @param path The path to match towards the glob.
    */
   readonly matches: picomatch.Matcher;
-  /** A glob pattern that matches any file or folder. */
-  static readonly ANYTHING = new Glob("*/**");
+
+  /** A glob that matches any file or folder. */
+  static readonly ANYTHING: Glob = {
+    pattern: "**/*",
+    matches: () => true,
+  } as const;
 
   /**
    * Creates a new glob that allows you to quickly match paths towards a pattern.
