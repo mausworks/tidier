@@ -1,17 +1,19 @@
-import toRegexp from "glob-to-regexp";
+import picomatch from "picomatch";
 
-const options: toRegexp.Options = {
-  globstar: true,
-  extended: true,
-  flags: "i",
+const options: picomatch.PicomatchOptions = {
+  dot: true,
+  nocase: true,
 } as const;
 
 /** A glob that quickly allows you to match paths towards a pattern. */
 export class Glob {
   /** The pattern that is being used for matching. */
   readonly pattern: string;
-  /** The regular expression that is internally used for matching paths. */
-  readonly #regexp: RegExp;
+  /**
+   * Determines whether the glob matches the path.
+   * @param path The path to match towards the glob.
+   */
+  readonly matches: picomatch.Matcher;
   /** A glob pattern that matches any file or folder. */
   static readonly ANYTHING = new Glob("*/**");
 
@@ -21,12 +23,6 @@ export class Glob {
    */
   constructor(pattern: string) {
     this.pattern = pattern;
-    this.#regexp = toRegexp(pattern, options);
+    this.matches = picomatch(pattern, options);
   }
-
-  /**
-   * Determines whether the glob matches the path.
-   * @param path The path to match towards the glob.
-   */
-  public matches = (path: string) => this.#regexp.test(path);
 }

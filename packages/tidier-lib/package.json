@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "change-case": "^4.1.2",
-    "glob-to-regexp": "^0.4.1",
     "ignore": "^5.1.8",
     "jsonschema": "^1.4.0",
+    "picomatch": "^2.3.0",
     "sponge-case": "^1.0.1",
     "title-case": "^3.0.3"
   },
@@ -23,6 +23,7 @@
     "@types/jest": "^26.0.24",
     "@types/jsonschema": "^1.1.1",
     "@types/node": "^16.4.0",
+    "@types/picomatch": "^2.3.0",
     "fast-check": "^2.17.0",
     "jest": "^27.0.6",
     "memfs": "^3.4.0",
