@@ -5,7 +5,6 @@ import {
   FileDeleteEvent,
   ExtensionContext,
   Disposable,
-  WorkspaceEdit,
   Uri,
   FileCreateEvent,
   FileRenameEvent,
@@ -31,10 +30,10 @@ export async function activate(_: ExtensionContext) {
   output.registerOutputChannel();
   output.log("Tidier activated. 🧹");
 
-  disposables.push(workspace.onDidDeleteFiles(onDeleteFile));
+  disposables.push(workspace.onDidDeleteFiles(onDeleteFiles));
   disposables.push(workspace.onDidSaveTextDocument(onSaveFile));
   disposables.push(workspace.onDidCreateFiles(onCreateFile));
-  disposables.push(workspace.onDidRenameFiles(onRenameFile));
+  disposables.push(workspace.onDidRenameFiles(onRenameFiles));
 
   registerCommands(tidier);
 
@@ -58,44 +57,22 @@ export function deactivate() {
   disposables.forEach((disposable) => disposable.dispose());
 }
 
-async function getConvention(path: string) {
-  const project = tidier.projects.bestMatch(path);
+async function resolveInProject(uri: Uri) {
+  const project = tidier.projects.bestMatch(uri.path);
 
   if (project) {
-    const relative = project.folder.relative(path);
+    const relative = project.folder.relative(uri.path);
     const type = await project.folder.entryType(relative);
 
     if (type) {
-      return project.getConvention(type, relative);
+      return [project, type];
     } else {
-      output.log(`Cannot resolve ${path} to a known entry type.`);
+      output.log(`Cannot resolve ${uri.path} to a known entry type.`);
       output.log(`Either it cannot be found or is neither a folder or file.`);
     }
   }
 
   return null;
-}
-
-async function createRenameEdit(uri: Uri): Promise<WorkspaceEdit> {
-  const edit = new WorkspaceEdit();
-  const convention = await getConvention(uri.path);
-
-  if (convention) {
-    const name = basename(uri.fsPath);
-    const newName = recase(name, convention.format);
-
-    if (name !== newName) {
-      const newPath = join(dirname(uri.fsPath), newName);
-      const newUri = uri.with({ path: newPath });
-      const nameFormat = convention.format.join(".");
-
-      output.log(`Recasing '${name}' -> '${newName}' [${nameFormat}]`);
-
-      edit.renameFile(uri, newUri);
-    }
-  }
-
-  return edit;
 }
 
 async function onCreateFile(event: FileCreateEvent) {
@@ -109,14 +86,15 @@ async function onCreateFile(event: FileCreateEvent) {
 
       tidier.projects.add(project);
     } else {
-      workspace.applyEdit(await createRenameEdit(uri));
+      await tidier.handle(uri);
     }
   }
 }
 
-async function onRenameFile(event: FileRenameEvent) {
-  for (const { newUri } of event.files) {
-    workspace.applyEdit(await createRenameEdit(newUri));
+async function onRenameFiles(event: FileRenameEvent) {
+  for (const { oldUri, newUri } of event.files) {
+    await tidier.handle(newUri);
+    await tidier.removeProblem(oldUri);
   }
 }
 
@@ -137,19 +115,21 @@ async function onSaveFile({ uri }: TextDocument) {
   }
 }
 
-async function onDeleteFile({ files }: FileDeleteEvent) {
-  for (const file of files) {
-    const name = basename(file.path);
+async function onDeleteFiles({ files }: FileDeleteEvent) {
+  for (const uri of files) {
+    tidier.removeProblem(uri);
+
+    const name = basename(uri.path);
 
     if (name === TIDIER_CONFIG_NAME) {
-      const project = tidier.projects.bestMatch(file.path);
+      const project = tidier.projects.bestMatch(uri.path);
 
       if (project) {
         tidier.projects.remove(project.folder.path);
         output.log(`Unloaded project at '${project.folder.path}'.`);
       }
     } else if (name === ".gitignore") {
-      const project = tidier.projects.bestMatch(file.path);
+      const project = tidier.projects.bestMatch(uri.path);
 
       if (project) {
         await handleProjectReload(tidier, project);

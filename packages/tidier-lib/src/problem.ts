@@ -51,6 +51,35 @@ export async function check(
   return Object.entries(problems);
 }
 
+export async function getProblem(
+  project: Project,
+  path: string
+): Promise<ProblemDetails | null> {
+  const type = await project.folder.entryType(path);
+
+  if (!type) {
+    return null;
+  }
+  const convention = project.getConvention(type, path);
+
+  if (!convention) {
+    return null;
+  }
+
+  const name = basename(path);
+  const expectedName = recase(name, convention.format);
+
+  if (name === expectedName) {
+    return null;
+  } else {
+    return {
+      type,
+      expectedName,
+      format: convention.format,
+    };
+  }
+}
+
 export async function fix(
   project: Project,
   [path, { expectedName }]: Problem

@@ -1,9 +1,26 @@
-import { Glob, Problem, Project, Projects, check, fix } from "@tidier/lib";
-import { DiagnosticCollection, languages, Range, Uri } from "vscode";
+import {
+  Glob,
+  Problem,
+  Project,
+  Projects,
+  check,
+  fix,
+  getProblem,
+  ProblemDetails,
+} from "@tidier/lib";
+import {
+  Diagnostic,
+  DiagnosticCollection,
+  DiagnosticSeverity,
+  languages,
+  Range,
+  Uri,
+} from "vscode";
 import { VSCodeFolder } from "./folder";
 import * as output from "./output";
 import { showErrorDialog } from "./ui";
 import * as settings from "./settings";
+import { basename, dirname, join } from "path";
 
 const NO_RANGE = new Range(0, 0, 0, 0);
 
@@ -26,23 +43,42 @@ export class TidierContext {
 
     const severity = settings.problems.severity();
 
-    for (const [path, { expectedName, type, format }] of problems) {
-      if (!settings.isEnabledFor(enabledFor, type)) {
+    for (const [path, details] of problems) {
+      if (!settings.isEnabledFor(enabledFor, details.type)) {
         continue;
       }
 
       const uri = this.getUri(project, path);
-      const formatStr = format.join(".");
-      const message = `Expected ${type} to be named '${expectedName}' to match format '${formatStr}'`;
 
-      this.#diagnostics.set(uri, [
-        {
-          message,
-          range: NO_RANGE,
-          severity,
-        },
-      ]);
+      this.#diagnostics.set(uri, [createDiagnostic(severity, details)]);
     }
+  }
+
+  /**
+   * Checks the URI for potential problems.
+   * If fixes are enabled for: attempts to fix the problem.
+   * If problems are enabled: and there is a problem with the entry,
+   * the problem is added to the problems pane.
+   *
+   */
+  async handle(uri: Uri): Promise<void> {
+    const { path } = uri;
+    const project = this.projects.bestMatch(uri.path);
+
+    if (project) {
+      const relative = project.folder.relative(path);
+      const details = await getProblem(project, relative);
+
+      if (details) {
+        this.#handleProblem(project, uri, [relative, details]);
+      } else {
+        this.removeProblem(uri);
+      }
+    }
+  }
+
+  async removeProblem(uri: Uri) {
+    this.#diagnostics.delete(uri);
   }
 
   /**
@@ -75,30 +111,36 @@ export class TidierContext {
    */
   async fix(...projects: readonly Project[]) {
     projects = !projects.length ? this.projects.list() : projects;
-    const enabledFor = settings.fixes.enabledFor();
+    const fixes = settings.fixes.enabledFor();
+
+    if (fixes === "none") {
+      return;
+    }
 
     const shouldFix = ([, { type }]: Problem) =>
-      settings.isEnabledFor(enabledFor, type);
+      settings.isEnabledFor(fixes, type);
 
     for (const project of projects) {
       const problems = await check(project);
 
-      for (const problem of problems) {
-        try {
-          if (shouldFix(problem)) {
-            await fix(project, problem);
-          }
-        } catch (error) {
-          const [path] = problem;
-          const title = `Fixing '${path}' failed:`;
-          const message =
-            error instanceof Error ? error.message : String(error);
+      attemptFix(project, problems.filter(shouldFix));
+    }
+  }
 
-          showErrorDialog([title, message].join(" "));
-          output.log(title);
-          output.log(String(error));
-        }
-      }
+  async #handleProblem(
+    project: Project,
+    uri: Uri,
+    [path, details]: Problem
+  ): Promise<void> {
+    const fixes = settings.fixes.enabledFor();
+    const problems = settings.problems.enabledFor();
+
+    if (settings.isEnabledFor(fixes, details.type)) {
+      await attemptFix(project, [[path, details]]);
+    } else if (settings.isEnabledFor(problems, details.type)) {
+      const severity = settings.problems.severity();
+
+      this.#diagnostics.set(uri, [createDiagnostic(severity, details)]);
     }
   }
 
@@ -110,3 +152,35 @@ export class TidierContext {
     }
   }
 }
+
+async function attemptFix(project: Project, problems: readonly Problem[]) {
+  for (const problem of problems) {
+    try {
+      await fix(project, problem);
+
+      logFix(problem);
+    } catch (error) {
+      const [path] = problem;
+      const title = `Fixing '${path}' failed:`;
+      const message = error instanceof Error ? error.message : String(error);
+
+      showErrorDialog([title, message].join(" "));
+      output.log(title);
+      output.log(String(error));
+    }
+  }
+}
+
+const createDiagnostic = (
+  severity: DiagnosticSeverity,
+  { type, expectedName, format }: ProblemDetails
+): Diagnostic => ({
+  message:
+    `Expected ${type} to be named '${expectedName}' ` +
+    `to match format '${format.join(".")}'`,
+  range: NO_RANGE,
+  severity,
+});
+
+const logFix = ([path, { expectedName, format }]: Problem) =>
+  output.log(`Renamed '${path}' -> '${expectedName}' [${format.join(".")}]`);
