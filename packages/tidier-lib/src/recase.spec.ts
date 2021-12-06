@@ -36,6 +36,11 @@ const expectations: Expectation[] = [
     format: "UPPER CASE.lc",
     output: "[_(_SLUG_)]__.tsx",
   },
+  {
+    input: "[...Slug].tsx",
+    format: "kebab-case.lc",
+    output: "[...slug].tsx",
+  },
 ];
 
 test("expectations of renames", () => {

@@ -112,7 +112,11 @@ function getTrailing(fragment: string) {
     i--;
   }
 
-  return trailing;
+  // If all characters were captured as
+  // trailing characters, that means that
+  // there are no non-border characters in this fragment,
+  // and that they will have been captured as leading characters.
+  return i <= 0 ? "" : trailing;
 }
 
 const omitBorders = (leading: string, fragment: string, trailing: string) =>
@@ -132,9 +136,10 @@ export function recase(name: string, format: NameFormat): string {
   const extensionCasing = getExtensionCasing(format);
 
   for (let i = 0; i < fragments.length; i++) {
+    const fragment = fragments[i];
     const isExtension =
       !!extensionCasing && fragments.length > 1 && i === fragments.length - 1;
-    const fragment = fragments[i];
+
     const leading = getLeading(fragment);
     const trailing = getTrailing(fragment);
     const word = omitBorders(leading, fragment, trailing);
