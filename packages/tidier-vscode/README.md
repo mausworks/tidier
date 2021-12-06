@@ -51,6 +51,13 @@ but you can add additional patterns in the "ignore"-section in the `.tidierrc`
 
 All significant changes between versions are listed below.
 
+### 0.2.0
+
+- Support "border characters" in names. `[slug].tsx` will no longer be renamed to `slug.tsx` when the format is set to e.g `camel-case`.
+- Unify problem handling to no longer rely on `WorkspaceEdit`: All renames are now handled through `workspace.fs`
+- Fixed a bug where if you manually renamed or deleted a file and 'manually fixed a problem', the problem persisted in the problems pane
+- Removed so that all unhandled rejections are no longer displayed in the Tidier output log
+
 ### 0.1.0
 
 Initial release, including the features:
