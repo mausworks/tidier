@@ -24,8 +24,6 @@ import { showProblemsDetectedDialog } from "./ui";
 const disposables: Disposable[] = [];
 const tidier = new TidierContext(new Projects());
 
-process.on("unhandledRejection", (err) => output.log(String(err)));
-
 export async function activate(_: ExtensionContext) {
   output.registerOutputChannel();
   output.log("Tidier activated. 🧹");
