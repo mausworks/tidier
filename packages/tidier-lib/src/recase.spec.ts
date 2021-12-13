@@ -1,7 +1,6 @@
 import fc from "fast-check";
 
-import * as ac from "./__arbitraries__/arbitrary-casing";
-import * as ap from "./__arbitraries__/arbitrary-paths";
+import { ap, ac } from "@tidier/test";
 import { parseNamePattern } from "./config";
 import { recase } from "./recase";
 

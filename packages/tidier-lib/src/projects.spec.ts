@@ -1,15 +1,9 @@
-jest.mock("fs");
-jest.mock("fs/promises");
-
-import { vol } from "memfs";
 import fc from "fast-check";
-import * as ap from "./__arbitraries__/arbitrary-paths";
+import { ap, InMemoryFolder } from "@tidier/test";
 
 import { createProjectSettings, ProjectSettings, TidierConfig } from "./config";
 import { Project } from "./project";
 import { Projects } from "./projects";
-import { FileDirectory } from ".";
-import { S } from "memfs/lib/constants";
 
 const basicJSONConfig: TidierConfig = {
   ignore: [],
@@ -20,15 +14,13 @@ const basicJSONConfig: TidierConfig = {
 const basicSettings: ProjectSettings = createProjectSettings(basicJSONConfig);
 
 describe("lifecycle", () => {
-  beforeEach(() => vol.reset());
-
   it("includes new projects on include", async () => {
     fc.assert(
       fc.property(ap.folder(true), (rootPath) => {
-        vol.mkdirSync(rootPath, { recursive: true });
+        const folder = new InMemoryFolder(rootPath);
 
         const projects = new Projects();
-        const project = new Project(new FileDirectory(rootPath), basicSettings);
+        const project = new Project(folder, basicSettings);
         projects.add(project);
 
         expect(projects.count).toBe(1);
@@ -42,10 +34,10 @@ describe("lifecycle", () => {
   it("removes projects by path", async () => {
     fc.assert(
       fc.property(ap.folder(true), (rootPath) => {
-        vol.mkdirSync(rootPath, { recursive: true });
+        const folder = new InMemoryFolder(rootPath);
 
         const projects = new Projects();
-        const project = new Project(new FileDirectory(rootPath), basicSettings);
+        const project = new Project(folder, basicSettings);
         projects.add(project);
         projects.remove(project.folder.path);
 
@@ -62,15 +54,17 @@ describe("combining projects", () => {
   it("combines projects without duplicates", async () => {
     fc.assert(
       fc.property(
-        fc.array(ap.folder(true), { minLength: 5, maxLength: 10 }),
+        fc.set(ap.folder(true), { minLength: 5, maxLength: 10 }),
         (rootPaths) => {
           const projects = new Projects();
           const moreProjects = new Projects();
+          const volume = rootPaths.reduce(
+            (vol, path) => ({ ...vol, [path]: null }),
+            {}
+          );
 
           for (const root of rootPaths) {
-            vol.mkdirSync(root, { recursive: true });
-
-            const folder = new FileDirectory(root);
+            const folder = new InMemoryFolder(root, volume);
             const project = new Project(folder, basicSettings);
             const sameProject = new Project(folder, basicSettings);
 

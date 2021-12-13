@@ -1,10 +1,10 @@
-import fc, { Arbitrary } from "fast-check";
+import fc from "fast-check";
 import {
   generalCasings,
   extensionCasings,
   generalAliases,
   GeneralAlias,
-} from "../convention";
+} from "@tidier/lib";
 
 export const general = () => fc.oneof(...generalCasings.map(fc.constant));
 

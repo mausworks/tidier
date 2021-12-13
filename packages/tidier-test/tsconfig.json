@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["./src/**/*.ts", "./src/.tidierrc.schema.json"],
+  "include": ["./src/**/*.ts"],
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src/",

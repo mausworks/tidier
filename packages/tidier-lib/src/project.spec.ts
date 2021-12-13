@@ -2,17 +2,15 @@ jest.mock("fs");
 jest.mock("fs/promises");
 
 import { join, dirname } from "path";
-import { fs, vol } from "memfs";
 import fc from "fast-check";
+import { ap, InMemoryFolder } from "@tidier/test";
 
-import * as ap from "./__arbitraries__/arbitrary-paths";
 import {
   createProjectSettings,
   ProjectSettings,
   TidierConfig,
   TIDIER_CONFIG_NAME,
 } from "./config";
-import { FileDirectory } from "./folder";
 import { Project } from "./project";
 import { Glob } from "./glob";
 
@@ -24,37 +22,31 @@ const basicJSONConfig: TidierConfig = {
 
 const basicSettings: ProjectSettings = createProjectSettings(basicJSONConfig);
 
-const seedVolume = (
+const seedFolder = (
   root: string,
   filePaths: string[],
   folderPaths: string[]
-) => {
-  vol.reset();
-  vol.mkdirSync(root, { recursive: true });
+): InMemoryFolder => {
+  const folder = new InMemoryFolder(root);
 
   for (const path of folderPaths) {
-    if (!vol.existsSync(join(root, path))) {
-      vol.mkdirSync(join(root, path), { recursive: true });
-    }
+    folder.volume[join(root, path)] = null;
   }
 
   for (const path of filePaths) {
-    if (!vol.existsSync(join(root, dirname(path)))) {
-      vol.mkdirSync(join(root, dirname(path)), { recursive: true });
-    }
-
-    vol.writeFileSync(join(root, path), "_file");
+    folder.volume[join(root, path)] = "_file";
   }
+
+  return folder;
 };
 
 describe("project creation", () => {
   it("creates a project when the root folder exists, and a config is provided", async () => {
     await fc.assert(
       fc.asyncProperty(ap.folder(true), async (rootPath) => {
-        seedVolume(rootPath, [], []);
+        const folder = seedFolder(rootPath, [], []);
 
-        const root = await FileDirectory.resolve(rootPath);
-        expect(() => new Project(root, basicSettings)).not.toThrow();
+        expect(() => new Project(folder, basicSettings)).not.toThrow();
       })
     );
   });
@@ -65,13 +57,11 @@ describe("project creation", () => {
         ap.folder(true),
         fc.array(fc.oneof(ap.folder(), ap.filePath()), { minLength: 1 }),
         async (rootPath, ignore) => {
-          seedVolume(rootPath, [], []);
+          const folder = seedFolder(rootPath, [], []);
           const configPath = join(rootPath, TIDIER_CONFIG_NAME);
+          folder.volume[configPath] = JSON.stringify(basicJSONConfig);
+          folder.volume[join(rootPath, ".gitignore")] = ignore.join("\n");
 
-          fs.writeFileSync(configPath, JSON.stringify(basicJSONConfig));
-          fs.writeFileSync(join(rootPath, ".gitignore"), ignore.join("\n"));
-
-          const folder = new FileDirectory(rootPath);
           const project = await Project.load(folder);
 
           for (const path of ignore) {
@@ -88,20 +78,20 @@ describe("listing", () => {
     await fc.assert(
       fc.asyncProperty(
         ap.folder(true),
-        fc.set(ap.filePath(), { minLength: 2 }),
+        fc.set(ap.filePath({ minLength: 2, maxLength: 2 }), {
+          minLength: 2,
+          maxLength: 2,
+        }),
         async (rootPath, files) => {
-          seedVolume(rootPath, files, []);
-
+          const root = seedFolder(rootPath, files, []);
           const ignore = files.slice(0, files.length / 2);
-          const root = await FileDirectory.resolve(rootPath);
 
           const project = new Project(root, { ...basicSettings, ignore });
           const entries = await project.list(Glob.ANYTHING, "file");
+          const paths = entries.map(([path]) => path);
 
-          for (const file of files) {
-            expect(entries.map(([path]) => path).includes(file)).toBe(
-              !ignore.includes(file)
-            );
+          for (const file of paths) {
+            expect(paths.includes(file)).toBe(!ignore.includes(file));
           }
         }
       )
@@ -117,32 +107,16 @@ describe("listing", () => {
           maxLength: 2,
         }),
         async (rootPath, folders) => {
-          seedVolume(rootPath, [], folders);
+          const root = seedFolder(rootPath, [], folders);
 
           const ignore = folders.slice(0, Math.floor(folders.length / 2));
-          const root = await FileDirectory.resolve(rootPath);
 
           const project = new Project(root, { ...basicSettings, ignore });
           const entries = await project.list(Glob.ANYTHING, "folder");
           const paths = entries.map(([path]) => path);
 
-          try {
-            for (const folder of folders) {
-              expect(paths.includes(folder)).toBe(!ignore.includes(folder));
-            }
-          } catch (error) {
-            console.log(
-              "root",
-              rootPath,
-              "folders",
-              folders,
-              "paths",
-              paths,
-              "ignore",
-              ignore
-            );
-
-            throw error;
+          for (const folder of folders) {
+            expect(paths.includes(folder)).toBe(!ignore.includes(folder));
           }
         }
       )
@@ -155,12 +129,11 @@ describe("listing", () => {
         ap.folder(true),
         fc.set(ap.folder(), { minLength: 2 }),
         async (rootPath, folders) => {
-          seedVolume(rootPath, [], folders);
+          const root = seedFolder(rootPath, [], folders);
           const otherRoot = folders[folders.length - 1];
           const configPath = join(rootPath, otherRoot, TIDIER_CONFIG_NAME);
-          fs.writeFileSync(configPath, "{}");
+          root.volume[configPath] = "{}";
 
-          const root = await FileDirectory.resolve(rootPath);
           const project = new Project(root, basicSettings);
           const entries = await project.list(Glob.ANYTHING, "folder");
 

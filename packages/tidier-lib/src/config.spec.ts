@@ -2,11 +2,9 @@ jest.mock("fs");
 jest.mock("fs/promises");
 
 import fc from "fast-check";
-import { vol, fs } from "memfs";
-import { dirname, join } from "path";
 
-import * as ac from "./__arbitraries__/arbitrary-casing";
 import { createProjectSettings, parseNamePattern } from "./config";
+import { ac } from "@tidier/test";
 
 describe("parsing conventions", () => {
   it("parses general formats", () => {

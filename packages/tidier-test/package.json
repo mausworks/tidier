@@ -1,31 +1,26 @@
 {
-  "name": "@tidier/lib",
+  "name": "@tidier/test",
   "version": "0.1.0",
-  "description": "Abstractions for keeping your projects tidier",
+  "description": "Internal test utilities for Tidier",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest --coverage",
-    "build": "rimraf dist && tsc -b tsconfig.production.json"
-  },
-  "dependencies": {
-    "change-case": "^4.1.2",
-    "ignore": "^5.1.8",
-    "jsonschema": "^1.4.0",
-    "picomatch": "^2.3.0",
-    "sponge-case": "^1.0.1",
-    "title-case": "^3.0.3"
+    "build": "rimraf dist && tsc",
+    "terser": "terser"
   },
   "devDependencies": {
+    "@tidier/lib": "^0.2.0",
     "@types/jest": "^26.0.24",
     "@types/jsonschema": "^1.1.1",
     "@types/node": "^16.4.0",
     "@types/picomatch": "^2.3.0",
-    "@tidier/test": "0.0.0",
     "fast-check": "^2.17.0",
     "jest": "^27.0.6",
+    "memfs": "^3.4.0",
     "rimraf": "^3.0.2",
+    "terser": "^5.7.1",
     "ts-jest": "^27.0.4",
     "typescript": "^4.3.5"
   }

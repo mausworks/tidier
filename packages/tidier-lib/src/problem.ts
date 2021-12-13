@@ -60,6 +60,7 @@ export async function getProblem(
   if (!type) {
     return null;
   }
+
   const convention = project.getConvention(type, path);
 
   if (!convention) {

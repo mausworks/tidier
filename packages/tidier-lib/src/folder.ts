@@ -1,7 +1,3 @@
-import { Dirent } from "fs";
-import fs from "fs/promises";
-import { join, resolve, dirname, parse } from "path";
-
 export type EntryType = "file" | "folder";
 
 export type FolderEntry = readonly [string, EntryType];
@@ -20,7 +16,7 @@ export interface Folder {
   /** Lists all files and folders in the specified directory. */
   list(path?: string): Promise<readonly FolderEntry[]>;
 
-  rename(path: string, newPath: string): Promise<void>;
+  rename(oldPath: string, newPath: string): Promise<void>;
   /**
    * Gets the type of the entry at the specified path.
    * Returns null if the entry does not exist.
@@ -28,86 +24,6 @@ export interface Folder {
   entryType(path: string): Promise<EntryType | null>;
   /** Reads the file at the path with the specified encoding */
   readFile(path: string, encoding?: BufferEncoding): Promise<string>;
-}
-
-export class FileDirectory implements Folder {
-  readonly path: string;
-
-  /**
-   * Creates a new file directory with the specified root.
-   * If you need to ensure that the path exists and is a directory, use `resolve()` instead.
-   * @param path An absolute path to a directory.
-   */
-  constructor(path: string) {
-    this.path = path;
-  }
-
-  public static async resolve(root: string): Promise<Folder> {
-    const basePath = resolve(root);
-    const status = await fs.stat(basePath);
-
-    if (!status.isDirectory()) {
-      throw new Error(`The path '${root}' does not resolve to a directory.`);
-    }
-
-    return new FileDirectory(basePath);
-  }
-
-  absolute(path: string) {
-    return join(this.path, path);
-  }
-
-  relative(path: string) {
-    return disjoin(this.path, path);
-  }
-
-  child(path: string): Folder {
-    return new FileDirectory(this.absolute(path));
-  }
-
-  parent(): Folder | null {
-    // `dirname` returns the same path if we are at the root.
-    const parentPath = dirname(this.path);
-
-    return parentPath === this.path ? null : new FileDirectory(parentPath);
-  }
-
-  rename(path: string, newPath: string): Promise<void> {
-    return fs.rename(path, newPath);
-  }
-
-  async entryType(path: string): Promise<EntryType | null> {
-    try {
-      const status = await fs.stat(this.absolute(path), {
-        throwIfNoEntry: false,
-      });
-
-      if (status?.isFile()) {
-        return "file";
-      } else if (status?.isDirectory()) {
-        return "folder";
-      } else {
-        return null;
-      }
-    } catch {
-      return null;
-    }
-  }
-
-  async list(path = "./"): Promise<readonly FolderEntry[]> {
-    const entries = await fs.readdir(this.absolute(path), {
-      withFileTypes: true,
-    });
-
-    return entries.filter(isFileOrFolder).map(toFolderEntry);
-  }
-
-  async readFile(
-    path: string,
-    encoding: BufferEncoding = "utf-8"
-  ): Promise<string> {
-    return await fs.readFile(this.absolute(path), encoding);
-  }
 }
 
 export const withTrailingSlash = (path: string) =>
@@ -134,10 +50,3 @@ export function disjoin(root: string, path: string) {
     throw new Error(`The path '${path}' is not a subpath of '${root}'.`);
   }
 }
-
-const isFileOrFolder = (entry: Dirent) => entry.isFile() || entry.isDirectory();
-
-const toFolderEntry = (entry: Dirent): FolderEntry => [
-  entry.name,
-  entry.isFile() ? "file" : "folder",
-];

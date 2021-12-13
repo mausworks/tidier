@@ -1,6 +1,6 @@
 import fc from "fast-check";
 
-import * as ac from "./__arbitraries__/arbitrary-casing";
+import { ac } from "@tidier/test";
 import { resolveCasing } from "./convention";
 import { validateCasing } from "./recase";
 
