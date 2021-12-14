@@ -47,23 +47,3 @@ see the [main readme for the Tidier project on GitHub](https://github.com/mauswo
 Tidier will automatically ignore files specified in your projects `.gitignore`,
 but you can add additional patterns in the "ignore"-section in the `.tidierrc` 
 
-## Release Notes
-
-All significant changes between versions are listed below.
-
-### 0.2.0
-
-- Support "border characters" in names. `[slug].tsx` will no longer be renamed to `slug.tsx` when the format is set to e.g `camel-case`.
-- Unify problem handling to no longer rely on `WorkspaceEdit`: All renames are now handled through `workspace.fs`
-- Fixed a bug where if you manually renamed or deleted a file and 'manually fixed a problem', the problem persisted in the problems pane
-- Removed so that all unhandled rejections are no longer displayed in the Tidier output log
-
-### 0.1.0
-
-Initial release, including the features:
-
-- Automatically detect and fix naming issues for files and folders as they are created or renamed
-- Syntax highlighting and validation of the .tidierrc config file
-- Commands for scanning projects and fixing issues
-- Automatic detect problems on project start-up
-- Multi-workspace support
