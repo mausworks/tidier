@@ -9,7 +9,7 @@
   },
   "publisher": "mausworks",
   "description": "The project formatter",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "engines": {
     "vscode": "^1.59.0"
   },
@@ -105,7 +105,7 @@
     "test": "node ./out/test/runTest.js"
   },
   "dependencies": {
-    "@tidier/lib": "^0.1.0"
+    "@tidier/lib": "0.0.0"
   },
   "devDependencies": {
     "@types/vscode": "^1.59.0",
