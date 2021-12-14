@@ -1,11 +1,13 @@
 {
   "private": true,
   "scripts": {
-    "start": "concurrently 'yarn start:tidier' 'yarn start:lib' 'yarn start:cli'",
-    "start:lib": "yarn --cwd packages/tidier-lib build -w",
-    "start:cli": "yarn --cwd packages/tidier-cli build -w",
-    "start:tidier": "packages/tidier-cli/tidier -Ww",
-    "test:lib": "cd packages/tidier-lib && yarn test"
+    "build:lib": "cd packages/tidier-lib && yarn build",
+    "build:test": "cd packages/tidier-test && yarn build",
+    "build:cli": "cd packages/tidier-cli && yarn build",
+    "build:vscode": "cd packages/tidier-vscode && yarn build",
+    "test:lib": "cd packages/tidier-lib && yarn test",
+    "test:test": "cd packages/tidier-test && yarn test",
+    "test:cli": "cd packages/tidier-cli && yarn test"
   },
   "workspaces": {
     "packages": [
@@ -14,8 +16,5 @@
     "nohoist": [
       "**/@tidier/**"
     ]
-  },
-  "devDependencies": {
-    "concurrently": "^6.2.0"
   }
 }
