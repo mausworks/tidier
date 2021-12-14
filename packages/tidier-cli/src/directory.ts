@@ -50,7 +50,7 @@ export class FileDirectory implements Folder {
   }
 
   async entryType(path: string): Promise<EntryType | null> {
-    const status = await fs.stat(this.absolute(path)).catch((e) => e);
+    const status = await fs.stat(this.absolute(path)).catch(() => undefined);
 
     if (status?.isFile()) {
       return "file";
