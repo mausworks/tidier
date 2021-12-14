@@ -15,7 +15,7 @@ export class FileDirectory implements Folder {
     this.path = path;
   }
 
-  public static async resolve(root: string): Promise<Folder> {
+  static async resolve(root: string): Promise<Folder> {
     const basePath = resolve(root);
     const status = await fs.stat(basePath);
 
@@ -50,19 +50,13 @@ export class FileDirectory implements Folder {
   }
 
   async entryType(path: string): Promise<EntryType | null> {
-    try {
-      const status = await fs.stat(this.absolute(path), {
-        throwIfNoEntry: false,
-      });
+    const status = await fs.stat(this.absolute(path)).catch((e) => e);
 
-      if (status?.isFile()) {
-        return "file";
-      } else if (status?.isDirectory()) {
-        return "folder";
-      } else {
-        return null;
-      }
-    } catch {
+    if (status?.isFile()) {
+      return "file";
+    } else if (status?.isDirectory()) {
+      return "folder";
+    } else {
       return null;
     }
   }

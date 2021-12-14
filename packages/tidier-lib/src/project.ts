@@ -17,18 +17,18 @@ const ALWAYS_IGNORE = ["**/.git"];
 export type ProjectConventions = Record<EntryType, readonly NameConvention[]>;
 
 export class Project {
-  public readonly folder: Folder;
+  readonly folder: Folder;
 
   #conventions: ProjectConventions;
   #ignore: Ignore;
 
-  public get conventions() {
+  get conventions() {
     return this.#conventions;
   }
 
   constructor(folder: Folder, settings: ProjectSettings) {
     this.folder = folder;
-    this.applySettings(settings);
+    this.#applySettings(settings);
   }
 
   /**
@@ -36,7 +36,7 @@ export class Project {
    * Also also loads the `.gitignore` if one exists at the root of the folder.
    * @param folder The folder to load the project from.
    */
-  public static async load(folder: Folder): Promise<Project> {
+  static async load(folder: Folder): Promise<Project> {
     const settings = await loadProjectSettings(folder);
 
     return new Project(folder, settings);
@@ -48,10 +48,7 @@ export class Project {
    * @param path The folder from which you want to search from.
    * @param levels The maximum number of parents to search.
    */
-  public static async near(
-    folder: Folder,
-    levels = 5
-  ): Promise<Project | null> {
+  static async near(folder: Folder, levels = 5): Promise<Project | null> {
     if (levels === 0) {
       return null;
     }
@@ -75,9 +72,9 @@ export class Project {
    * Reloads the project settings.
    * This is useful for when the config or .gitignore has been updated, and you want to reload it.
    */
-  public async reload(): Promise<void> {
+  async reload(): Promise<void> {
     const settings = await loadProjectSettings(this.folder);
-    this.applySettings(settings);
+    this.#applySettings(settings);
   }
 
   /**
@@ -86,24 +83,24 @@ export class Project {
    * @param type Whether to get a convention for a file or folder.
    * @param path A path relative to the project root.
    */
-  public getConvention(type: EntryType, path: string): NameConvention | null {
-    return this.getFromConventions(path, this.#conventions[type]);
+  getConvention(type: EntryType, path: string): NameConvention | null {
+    return this.#getFromConventions(path, this.#conventions[type]);
   }
 
   /** Lists entries of the specified type matching the provided glob. */
-  public async list(
+  async list(
     glob: Glob,
     entryType?: EntryType
   ): Promise<readonly FolderEntry[]> {
-    return await this.collect([], "./", glob, entryType);
+    return await this.#collect([], "./", glob, entryType);
   }
 
   /** Returns whether the path is ignored within the project. */
-  public ignores(path: string): boolean {
+  ignores(path: string): boolean {
     return this.#ignore.ignores(path);
   }
 
-  private applySettings(settings: ProjectSettings) {
+  #applySettings(settings: ProjectSettings) {
     this.#ignore = ignore({ ignorecase: true }).add(settings.ignore);
     this.#conventions = {
       file: settings.fileConventions,
@@ -111,7 +108,7 @@ export class Project {
     };
   }
 
-  private async collect(
+  async #collect(
     collected: FolderEntry[],
     folderPath: string,
     glob: Glob,
@@ -139,7 +136,7 @@ export class Project {
             collected.push([path, type]);
           }
 
-          await this.collect(collected, path, glob, filter);
+          await this.#collect(collected, path, glob, filter);
         }
       }
     }
@@ -147,10 +144,7 @@ export class Project {
     return collected;
   }
 
-  private getFromConventions(
-    path: string,
-    conventions: readonly NameConvention[]
-  ) {
+  #getFromConventions(path: string, conventions: readonly NameConvention[]) {
     if (this.ignores(path)) {
       return null;
     } else {

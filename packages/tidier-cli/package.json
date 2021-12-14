@@ -6,17 +6,20 @@
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",
   "bin": "tidier",
+  "engines": {
+    "node": ">=14.17.0"
+  },
   "scripts": {
     "start": "node ./dist/index.js",
     "test": "jest",
     "build": "rimraf dist && tsc"
   },
   "dependencies": {
-    "@types/colors": "^1.2.1",
     "colors": "^1.4.0",
     "yargs": "^17.0.1"
   },
   "workspaceDependencies": {
+    "@types/colors": "^1.2.1",
     "@tidier/lib": "*",
     "@tidier/test": "*"
   },

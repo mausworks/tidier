@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
+    "lint:prettier": "yarn prettier --ignore-path .gitignore --check 'packages/**/*.ts'",
+    "lint:eslint": "yarn eslint --ignore-path .gitignore 'packages/**/*.ts'",
     "build:lib": "cd packages/tidier-lib && yarn build",
     "build:test": "cd packages/tidier-test && yarn build",
     "build:cli": "cd packages/tidier-cli && yarn build",
@@ -16,5 +18,11 @@
     "nohoist": [
       "**/@tidier/**"
     ]
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1",
+    "eslint": "^8.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0"
   }
 }

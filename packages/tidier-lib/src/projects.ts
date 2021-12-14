@@ -8,7 +8,7 @@ export class Projects {
   /** The projects, sorted by longest root first. */
   #members: readonly Project[];
 
-  public get count() {
+  get count() {
     return this.#members.length;
   }
 
@@ -20,7 +20,7 @@ export class Projects {
    * Returns the project which best matches the path.
    * @param path The path which you want to find the project for.
    */
-  public bestMatch(path: string): Project | null {
+  bestMatch(path: string): Project | null {
     for (const project of this.#members) {
       const { folder } = project;
       const withSlash = withTrailingSlash(folder.path);
@@ -34,7 +34,7 @@ export class Projects {
   }
 
   /** Lists all projects. */
-  public list(): readonly Project[] {
+  list(): readonly Project[] {
     return this.#members;
   }
 
@@ -43,7 +43,7 @@ export class Projects {
    * @param folder The folder you want to search.
    * @param maxDepth The maximum depth of sub folders.
    */
-  public static async discover(
+  static async discover(
     folder: Folder,
     maxDepth = Infinity
   ): Promise<Projects> {
@@ -56,19 +56,19 @@ export class Projects {
    * Find the project with the specified folder path,
    * or null if the project is not included.
    */
-  public find(path: string): Project | null {
+  find(path: string): Project | null {
     return this.#members.find(pathMatcher(path)) || null;
   }
 
   /** Includes the specified project if it is not already included. */
-  public add(project: Project): void {
+  add(project: Project): void {
     if (!this.find(project.folder.path)) {
       this.#members = sortByLongestPath([...this.#members, project]);
     }
   }
 
   /** Combines the provided projects with these projects. */
-  public combine(projects: Projects): void {
+  combine(projects: Projects): void {
     const newProjects: Project[] = [];
 
     for (const proj of this.#members.concat(projects.#members)) {
@@ -81,7 +81,7 @@ export class Projects {
   }
 
   /** Removes the project with the specified path. */
-  public remove(path: string): void {
+  remove(path: string): void {
     this.#members = this.#members.filter(
       (project) => project.folder.path !== path
     );
