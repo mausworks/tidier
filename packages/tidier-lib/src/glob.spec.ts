@@ -38,3 +38,7 @@ test("different paths do not match each other", () => {
     )
   );
 });
+
+test("ANYTHING matches any string", () => {
+  fc.assert(fc.property(fc.string(), Glob.ANYTHING.matches));
+});
