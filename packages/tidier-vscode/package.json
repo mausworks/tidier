@@ -104,8 +104,8 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
-  "dependencies": {
-    "@tidier/lib": "0.0.0"
+  "workspaceDependencies": {
+    "@tidier/test": "*"
   },
   "devDependencies": {
     "@types/vscode": "^1.59.0",
