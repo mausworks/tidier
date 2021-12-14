@@ -15,7 +15,7 @@
       "**/@tidier/**"
     ]
   },
-  "dependencies": {
+  "devDependencies": {
     "concurrently": "^6.2.0"
   }
 }
