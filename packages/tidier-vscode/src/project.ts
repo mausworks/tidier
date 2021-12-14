@@ -36,7 +36,7 @@ export async function handleLoadProject(tidier: TidierContext, uri: Uri) {
     const folder = new VSCodeFolder(uri);
     const project = await Project.load(folder);
     tidier.projects.add(project);
-    tidier.scan(project);
+    tidier.detectProblems(project);
 
     output.log(`Included project at ${project.folder.path}.`);
   } catch (error) {
@@ -53,7 +53,7 @@ export async function handleProjectReload(
 ) {
   try {
     await project.reload();
-    await tidier.scan(project);
+    await tidier.detectProblems(project);
     output.log(`Reloaded project at ${project.folder.path}`);
   } catch (error) {
     const name = basename(project.folder.path);

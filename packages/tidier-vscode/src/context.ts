@@ -5,7 +5,7 @@ import {
   Projects,
   check,
   fix,
-  getProblem,
+  checkPath,
   ProblemDetails,
 } from "@tidier/lib";
 import {
@@ -20,7 +20,6 @@ import { VSCodeFolder } from "./folder";
 import * as output from "./output";
 import { showErrorDialog } from "./ui";
 import * as settings from "./settings";
-import { basename, dirname, join } from "path";
 
 const NO_RANGE = new Range(0, 0, 0, 0);
 
@@ -29,8 +28,8 @@ export class TidierContext {
 
   readonly #diagnostics: DiagnosticCollection;
 
-  constructor(projects: Projects) {
-    this.projects = projects;
+  constructor() {
+    this.projects = new Projects();
     this.#diagnostics = languages.createDiagnosticCollection("Tidier");
   }
 
@@ -56,10 +55,8 @@ export class TidierContext {
 
   /**
    * Checks the URI for potential problems.
-   * If fixes are enabled for: attempts to fix the problem.
-   * If problems are enabled: and there is a problem with the entry,
-   * the problem is added to the problems pane.
-   *
+   * If fixes are enabled: they are applied automatically.
+   * If problems are enabled: they are added to the problems pane.
    */
   async handle(uri: Uri): Promise<void> {
     const { path } = uri;
@@ -67,7 +64,7 @@ export class TidierContext {
 
     if (project) {
       const relative = project.folder.relative(path);
-      const details = await getProblem(project, relative);
+      const details = await checkPath(project, relative);
 
       if (details) {
         this.#handleProblem(project, uri, [relative, details]);
@@ -82,13 +79,14 @@ export class TidierContext {
   }
 
   /**
-   * Scans the provided projects,
-   * or all projects in the context if no projects are provided,
-   * then returns the projects which have problems.
+   * Detects problems in the provided projects,
+   * or all projects in the context if no projects are provided.
    */
-  async scan(...projects: readonly Project[]): Promise<readonly Project[]> {
+  async detectProblems(
+    ...projects: readonly Project[]
+  ): Promise<[Project, readonly Problem[]][]> {
     projects = !projects.length ? this.projects.list() : projects;
-    const problemProjects: Project[] = [];
+    const entries: [Project, readonly Problem[]][] = [];
 
     this.#diagnostics.clear();
 
@@ -96,13 +94,12 @@ export class TidierContext {
       const problems = await check(project, Glob.ANYTHING);
 
       if (problems.length > 0) {
-        problemProjects.push(project);
+        entries.push([project, problems]);
+        this.setProblems(project, problems);
       }
-
-      this.setProblems(project, problems);
     }
 
-    return problemProjects;
+    return entries;
   }
 
   /**
@@ -123,7 +120,7 @@ export class TidierContext {
     for (const project of projects) {
       const problems = await check(project);
 
-      attemptFix(project, problems.filter(shouldFix));
+      attemptFixes(project, problems.filter(shouldFix));
     }
   }
 
@@ -136,7 +133,7 @@ export class TidierContext {
     const problems = settings.problems.enabledFor();
 
     if (settings.isEnabledFor(fixes, details.type)) {
-      await attemptFix(project, [[path, details]]);
+      await attemptFixes(project, [[path, details]]);
     } else if (settings.isEnabledFor(problems, details.type)) {
       const severity = settings.problems.severity();
 

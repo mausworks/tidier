@@ -22,7 +22,7 @@ import {
 import { showProblemsDetectedDialog } from "./ui";
 
 const disposables: Disposable[] = [];
-const tidier = new TidierContext(new Projects());
+const tidier = new TidierContext();
 
 export async function activate(_: ExtensionContext) {
   output.registerOutputChannel();
@@ -40,9 +40,9 @@ export async function activate(_: ExtensionContext) {
       tidier.projects,
       workspace.workspaceFolders
     );
-    const projects = await tidier.scan();
+    const entries = await tidier.detectProblems();
 
-    for (const project of projects) {
+    for (const [project] of entries) {
       showProblemsDetectedDialog(tidier, project);
     }
   }
@@ -124,7 +124,7 @@ async function onDeleteFiles({ files }: FileDeleteEvent) {
 
       if (project) {
         tidier.projects.remove(project.folder.path);
-        output.log(`Unloaded project at '${project.folder.path}'.`);
+        output.log(`Unloaded project at ${project.folder.path}`);
       }
     } else if (name === ".gitignore") {
       const project = tidier.projects.bestMatch(uri.path);
