@@ -12,6 +12,7 @@ import {
   Diagnostic,
   DiagnosticCollection,
   DiagnosticSeverity,
+  env,
   languages,
   Range,
   Uri,
@@ -150,10 +151,20 @@ export class TidierContext {
   }
 }
 
-async function attemptFix(project: Project, problems: readonly Problem[]) {
+// There doesn't seem to be anything built into the VSCode
+// extension API that allows you to get the platform.
+const isWindows = () => Boolean(env.appRoot && env.appRoot[0] !== "/");
+
+async function attemptFixes(project: Project, problems: readonly Problem[]) {
+  // Windows being weird:
+  // The Windows API for `stat` is case-insensitive, unlike NTFS.
+  // This means that if we stat "FooBar.js" when renaming from "fooBar.js",
+  // it will say that "FooBar.js" does indeed exist, even though it's named "fooBar.js".
+  const overwrite = isWindows();
+
   for (const problem of problems) {
     try {
-      await fix(project, problem);
+      await fix(project, problem, overwrite);
 
       logFix(problem);
     } catch (error) {
@@ -161,7 +172,7 @@ async function attemptFix(project: Project, problems: readonly Problem[]) {
       const title = `Fixing '${path}' failed:`;
       const message = error instanceof Error ? error.message : String(error);
 
-      showErrorDialog([title, message].join(" "));
+      showErrorDialog(`${title} ${message}`);
       output.log(title);
       output.log(String(error));
     }
