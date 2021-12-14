@@ -1,6 +1,6 @@
 import { basename, dirname, join } from "path";
 import { NameFormat } from "./convention";
-import { EntryType } from "./folder";
+import { EntryType, FolderEntry } from "./folder";
 import { Glob } from "./glob";
 import { Project } from "./project";
 import { recase } from "./recase";
@@ -30,28 +30,18 @@ export async function check(
       continue;
     }
 
-    const convention = project.getConvention(type, path);
+    const details = getProblemDetails(project, [path, type]);
 
-    if (!convention) {
-      continue;
-    }
-
-    const name = basename(path);
-    const expectedName = recase(name, convention.format);
-
-    if (name !== expectedName) {
-      problems[path] = {
-        type,
-        expectedName,
-        format: convention.format,
-      };
+    if (details) {
+      problems[path] = details;
     }
   }
 
   return Object.entries(problems);
 }
 
-export async function getProblem(
+/** Check a specific path for problems. */
+export async function checkPath(
   project: Project,
   path: string
 ): Promise<ProblemDetails | null> {
@@ -61,6 +51,10 @@ export async function getProblem(
     return null;
   }
 
+  return getProblemDetails(project, [path, type]);
+}
+
+export function getProblemDetails(project: Project, [path, type]: FolderEntry) {
   const convention = project.getConvention(type, path);
 
   if (!convention) {
@@ -83,7 +77,8 @@ export async function getProblem(
 
 export async function fix(
   project: Project,
-  [path, { expectedName }]: Problem
+  [path, { expectedName }]: Problem,
+  overwrite = false
 ): Promise<void> {
   const newPath = join(dirname(path), expectedName);
 
@@ -91,11 +86,13 @@ export async function fix(
     throw new Error(`The new path '${path}' is ignored by the project.`);
   }
 
-  const type = await project.folder.entryType(newPath);
+  if (!overwrite) {
+    const type = await project.folder.entryType(newPath);
 
-  if (type) {
-    throw new Error(`A ${type} with the new name '${expectedName}' exists.`);
+    if (type) {
+      throw new Error(`A ${type} with the new name '${expectedName}' exists.`);
+    }
   }
 
-  project.folder.rename(path, newPath);
+  await project.folder.rename(path, newPath);
 }
