@@ -16,6 +16,10 @@ export interface Folder {
   /** Lists all files and folders in the specified directory. */
   list(path?: string): Promise<readonly FolderEntry[]>;
 
+  /**
+   * Renames a file or folder from the old path, to the new path.
+   * Note: If an entry exists at the `newPath`, it will be overwritten.
+   */
   rename(oldPath: string, newPath: string): Promise<void>;
   /**
    * Gets the type of the entry at the specified path.
