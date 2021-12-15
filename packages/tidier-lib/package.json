@@ -5,9 +5,15 @@
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
   "scripts": {
     "test": "jest --coverage",
-    "build": "rimraf dist && tsc -b tsconfig.production.json"
+    "build": "rimraf dist && tsc -b tsconfig.production.json",
+    "release": "semantic-release"
   },
   "dependencies": {
     "change-case": "^4.1.2",
