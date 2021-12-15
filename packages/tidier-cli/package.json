@@ -1,6 +1,6 @@
 {
   "name": "@tidier/cli",
-  "version": "0.2.0",
+  "version": "0.0.0",
   "description": "A CLI for keeping your workspaces & projects tidier",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
