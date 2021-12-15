@@ -2,7 +2,7 @@ jest.mock("fs");
 jest.mock("fs/promises");
 
 import fc from "fast-check";
-import { ap } from "@tidier/test";
+import { ap } from "tidier-test";
 import { FileDirectory } from "./directory";
 import { dirname, join } from "path";
 import { vol } from "memfs";

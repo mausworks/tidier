@@ -1,5 +1,5 @@
 {
-  "name": "@tidier/core",
+  "name": "tidier-core",
   "version": "0.0.0",
   "description": "Abstractions for keeping your projects tidier",
   "license": "ISC",

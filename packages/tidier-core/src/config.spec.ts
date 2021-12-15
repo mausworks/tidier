@@ -4,7 +4,7 @@ jest.mock("fs/promises");
 import fc from "fast-check";
 
 import { createProjectSettings, parseNamePattern } from "./config";
-import { ac } from "@tidier/test";
+import { ac } from "tidier-test";
 
 describe("parsing conventions", () => {
   it("parses general formats", () => {

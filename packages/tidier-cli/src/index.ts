@@ -1,4 +1,4 @@
-import { TIDIER_CONFIG_NAME } from "@tidier/core";
+import { TIDIER_CONFIG_NAME } from "tidier-core";
 import yargs from "yargs";
 
 import { tidier } from "./tidier";

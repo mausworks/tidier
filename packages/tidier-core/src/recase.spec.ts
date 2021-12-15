@@ -1,6 +1,6 @@
 import fc from "fast-check";
 
-import { ap, ac } from "@tidier/test";
+import { ap, ac } from "tidier-test";
 import { parseNamePattern } from "./config";
 import { recase } from "./recase";
 

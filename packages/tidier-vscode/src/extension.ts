@@ -1,4 +1,4 @@
-import { Project, TIDIER_CONFIG_NAME } from "@tidier/core";
+import { Project, TIDIER_CONFIG_NAME } from "tidier-core";
 import { basename, dirname } from "path";
 import {
   workspace,

@@ -1,5 +1,5 @@
 {
-  "name": "@tidier/cli",
+  "name": "tidier-cli",
   "version": "0.0.0",
   "description": "A CLI for keeping your workspaces & projects tidier",
   "license": "ISC",

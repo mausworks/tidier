@@ -1,5 +1,5 @@
 import { dirname, join } from "path";
-import { Project, check } from "@tidier/core";
+import { Project, check } from "tidier-core";
 import { formatRecase } from "./output";
 
 export async function write(project: Project) {

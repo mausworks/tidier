@@ -1,4 +1,4 @@
-import { Project } from "@tidier/core";
+import { Project } from "tidier-core";
 import { basename } from "path";
 import { commands, window } from "vscode";
 import { TidierContext } from "./context";

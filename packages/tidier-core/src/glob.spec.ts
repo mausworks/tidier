@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { Glob } from "./glob";
 
-import { ap } from "@tidier/test";
+import { ap } from "tidier-test";
 
 const matches = {
   "*": ["foo", "bar", "baz", "bat"],

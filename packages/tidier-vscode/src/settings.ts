@@ -1,4 +1,4 @@
-import { EntryType } from "@tidier/core";
+import { EntryType } from "tidier-core";
 import { DiagnosticSeverity, workspace } from "vscode";
 
 const severityMap: Record<string, DiagnosticSeverity> = {

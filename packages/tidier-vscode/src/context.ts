@@ -7,7 +7,7 @@ import {
   fix,
   checkPath,
   ProblemDetails,
-} from "@tidier/core";
+} from "tidier-core";
 import {
   Diagnostic,
   DiagnosticCollection,

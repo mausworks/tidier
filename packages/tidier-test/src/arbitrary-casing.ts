@@ -4,7 +4,7 @@ import {
   extensionCasings,
   generalAliases,
   GeneralAlias,
-} from "@tidier/core";
+} from "tidier-core";
 
 export const general = () => fc.oneof(...generalCasings.map(fc.constant));
 
