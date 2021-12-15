@@ -1,5 +1,6 @@
 {
   "name": "tidier",
+  "private": true,
   "displayName": "Tidier",
   "icon": "logo.png",
   "repository": {
