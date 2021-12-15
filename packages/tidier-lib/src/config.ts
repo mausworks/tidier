@@ -24,6 +24,7 @@ export interface TidierConfig {
   readonly folders?: NameRules;
 }
 
+/** Describes the support settings for a project. */
 export interface ProjectSettings {
   /** Glob patterns of what to exclude. */
   readonly ignore: string[];
