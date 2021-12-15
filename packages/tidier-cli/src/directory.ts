@@ -1,7 +1,7 @@
 import { Dirent } from "fs";
 import fs from "fs/promises";
 import { dirname, join, resolve } from "path";
-import { disjoin, EntryType, Folder, FolderEntry } from "@tidier/lib";
+import { disjoin, EntryType, Folder, FolderEntry } from "@tidier/core";
 
 export class FileDirectory implements Folder {
   readonly path: string;

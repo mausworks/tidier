@@ -14,9 +14,9 @@ jobs:
       - run: yarn
       - run: yarn lint:eslint
       - run: yarn lint:prettier
-      - run: yarn build:lib
+      - run: yarn build:core
       - run: yarn build:test
       - run: yarn build:cli
-      - run: yarn test:lib
+      - run: yarn test:core
       - run: yarn test:test
       - run: yarn test:cli

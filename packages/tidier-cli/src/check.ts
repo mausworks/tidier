@@ -1,4 +1,4 @@
-import { Project, Problem, check } from "@tidier/lib";
+import { Project, Problem, check } from "@tidier/core";
 import { formatRecase } from "./output";
 
 export interface CheckSummary {

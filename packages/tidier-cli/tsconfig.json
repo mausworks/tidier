@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "references": [{ "path": "../tidier-lib" }],
+  "references": [{ "path": "../tidier-core" }],
   "include": ["src"],
   "compilerOptions": {
     "composite": true,
