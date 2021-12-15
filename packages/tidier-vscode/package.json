@@ -1,5 +1,6 @@
 {
   "name": "tidier",
+  "private": true,
   "displayName": "Tidier",
   "icon": "logo.png",
   "repository": {
@@ -104,17 +105,14 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
-  "dependencies": {
-    "@tidier/lib": "0.0.0"
+  "workspaceDependencies": {
+    "@tidier/test": "*"
   },
   "devDependencies": {
     "@types/vscode": "^1.59.0",
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.0.4",
     "@types/node": "^12.11.7",
-    "eslint": "^7.19.0",
-    "@typescript-eslint/eslint-plugin": "^4.14.1",
-    "@typescript-eslint/parser": "^4.14.1",
     "glob": "^7.1.6",
     "mocha": "^8.2.1",
     "typescript": "^4.1.3",

@@ -1,6 +1,7 @@
 {
   "name": "@tidier/test",
-  "version": "0.1.0",
+  "version": "0.0.0",
+  "private": true,
   "description": "Internal test utilities for Tidier",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
@@ -10,8 +11,10 @@
     "build": "rimraf dist && tsc",
     "terser": "terser"
   },
+  "workspaceDependencies": {
+    "@tidier/lib": "*"
+  },
   "devDependencies": {
-    "@tidier/lib": "^0.2.0",
     "@types/jest": "^26.0.24",
     "@types/jsonschema": "^1.1.1",
     "@types/node": "^16.4.0",

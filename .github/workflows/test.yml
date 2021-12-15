@@ -1,0 +1,22 @@
+name: on-push
+on: 
+  push:
+    branches-ignore: 
+      - 'main'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: yarn
+      - run: yarn lint:eslint
+      - run: yarn lint:prettier
+      - run: yarn build:lib
+      - run: yarn build:test
+      - run: yarn build:cli
+      - run: yarn test:lib
+      - run: yarn test:test
+      - run: yarn test:cli

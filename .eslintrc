@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/semi": "error",
+    "@typescript-eslint/explicit-member-accessibility": [
+      "error",
+      {
+        "accessibility": "no-public"
+      }
+    ],
+    "curly": "error",
+    "eqeqeq": "error",
+    "no-throw-literal": "error",
+    "semi": "error",
+    "@typescript-eslint/comma-dangle": ["error", "only-multiline"]
+  },
+  "ignorePatterns": ["**/*.d.ts"]
+}

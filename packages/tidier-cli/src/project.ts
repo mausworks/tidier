@@ -1,7 +1,8 @@
 import { resolve } from "path";
-import { Project, FileDirectory } from "@tidier/lib";
+import { Project } from "@tidier/lib";
 
 import { TidierProjectOptions } from "./options";
+import { FileDirectory } from "./directory";
 
 export async function projectFromOptions(options: TidierProjectOptions) {
   const path = resolve(process.cwd(), options.project || "");
