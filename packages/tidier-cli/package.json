@@ -12,15 +12,11 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "test": "jest",
-    "build": "rimraf dist && tsc"
+    "build": "rimraf dist/ && rimraf *.tsbuildinfo && tsc -b tsconfig.production.json"
   },
   "dependencies": {
     "colors": "^1.4.0",
     "yargs": "^17.0.1"
-  },
-  "workspaceDependencies": {
-    "@tidier/lib": "*",
-    "@tidier/test": "*"
   },
   "devDependencies": {
     "@types/colors": "^1.2.1",

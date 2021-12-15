@@ -10,7 +10,7 @@
   },
   "publisher": "mausworks",
   "description": "The project formatter",
-  "version": "0.3.0",
+  "version": "0.0.0",
   "engines": {
     "vscode": "^1.59.0"
   },
@@ -104,9 +104,6 @@
     "pretest": "yarn run test-compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
-  },
-  "workspaceDependencies": {
-    "@tidier/test": "*"
   },
   "devDependencies": {
     "@types/vscode": "^1.59.0",
