@@ -1,4 +1,5 @@
 {
+  "name": "tidier",
   "private": true,
   "scripts": {
     "lint:prettier": "yarn prettier --ignore-path .gitignore --check 'packages/**/*.ts'",
@@ -9,7 +10,8 @@
     "build:vscode": "cd packages/tidier-vscode && yarn build",
     "test:lib": "cd packages/tidier-lib && yarn test",
     "test:test": "cd packages/tidier-test && yarn test",
-    "test:cli": "cd packages/tidier-cli && yarn test"
+    "test:cli": "cd packages/tidier-cli && yarn test",
+    "release:lib": "cd packages/tidier-lib && yarn release"
   },
   "workspaces": {
     "packages": [
@@ -23,6 +25,7 @@
     "prettier": "^2.5.1",
     "eslint": "^8.4.1",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
-    "@typescript-eslint/parser": "^5.7.0"
+    "@typescript-eslint/parser": "^5.7.0",
+    "semantic-release": "^18.0.1"
   }
 }
