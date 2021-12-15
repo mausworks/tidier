@@ -1,4 +1,3 @@
-import { Problem } from "@tidier/lib";
 import { window, OutputChannel } from "vscode";
 
 let channel: OutputChannel | null = null;

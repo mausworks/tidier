@@ -1,5 +1,5 @@
-import { Project, Projects, recase, TIDIER_CONFIG_NAME } from "@tidier/lib";
-import { basename, dirname, join } from "path";
+import { Project, TIDIER_CONFIG_NAME } from "@tidier/lib";
+import { basename, dirname } from "path";
 import {
   workspace,
   FileDeleteEvent,

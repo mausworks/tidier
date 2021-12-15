@@ -1,7 +1,7 @@
 jest.mock("fs");
 jest.mock("fs/promises");
 
-import { join, dirname } from "path";
+import { join } from "path";
 import fc from "fast-check";
 import { ap, InMemoryFolder } from "@tidier/test";
 
