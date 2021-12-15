@@ -5,7 +5,7 @@
     "ecmaVersion": 6,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "unused-imports"],
   "rules": {
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/semi": "error",
@@ -15,6 +15,7 @@
         "accessibility": "no-public"
       }
     ],
+    "unused-imports/no-unused-imports": "error",
     "curly": "error",
     "eqeqeq": "error",
     "no-throw-literal": "error",
