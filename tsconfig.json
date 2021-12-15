@@ -2,7 +2,8 @@
   "references": [
     { "path": "./packages/tidier-core" },
     { "path": "./packages/tidier-cli" },
-    { "path": "./packages/tidier-vscode" }
+    { "path": "./packages/tidier-vscode" },
+    { "path": "./packages/tidier-test" }
   ],
   "exclude": ["**/node_modules"]
 }
