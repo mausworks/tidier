@@ -17,7 +17,7 @@
   "scripts": {
     "test": "jest --coverage",
     "build": "rimraf dist/ && rimraf *.tsbuildinfo && tsc -b tsconfig.production.json",
-    "release": "semantic-release --tag-format 'lib-v${version}'"
+    "release": "semantic-release --tag-format 'core-v${version}'"
   },
   "dependencies": {
     "change-case": "^4.1.2",
