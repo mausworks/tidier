@@ -105,6 +105,9 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
+  "dependencies": {
+    "tidier-core": "*"
+  },
   "devDependencies": {
     "@types/vscode": "^1.59.0",
     "@types/glob": "^7.1.3",

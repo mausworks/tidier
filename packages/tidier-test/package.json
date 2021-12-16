@@ -10,6 +10,9 @@
     "build": "rimraf dist/ && rimraf *.tsbuildinfo && tsc -b tsconfig.production.json",
     "terser": "terser"
   },
+  "dependencies": {
+    "tidier-core": "*"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@types/jsonschema": "^1.1.1",
