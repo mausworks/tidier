@@ -20,7 +20,6 @@
     "yargs": "^17.0.1"
   },
   "devDependencies": {
-    "@types/colors": "^1.2.1",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.0",
     "fast-check": "^2.17.0",
