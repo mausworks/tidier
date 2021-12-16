@@ -1,7 +1,7 @@
 {
   "name": "tidier",
   "version": "0.0.0",
-  "description": "A CLI for keeping your workspaces & projects tidier",
+  "description": "A CLI for keeping your projects tidier",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",

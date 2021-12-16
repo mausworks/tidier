@@ -3,10 +3,12 @@ import yargs from "yargs";
 
 import { tidier } from "./tidier";
 
-export async function run() {
-  const options = yargs(process.argv.slice(2))
-    .scriptName("tidier")
-    .usage("The workspace formatter")
+export default async function run() {
+  const { _: args, ...options } = yargs(process.argv.slice(2))
+    .usage(
+      "Usage: tidier [options] [...globs]\n\n" +
+        "The provided globs are always relative to the project: consider quoting them."
+    )
     .options("write", {
       alias: "w",
       describe: "Write fixes to problems to the project.",
@@ -22,7 +24,7 @@ export async function run() {
       type: "boolean",
     })
     .option("project", {
-      alias: "P",
+      alias: "p",
       type: "string",
       demandOption: false,
       describe:
@@ -32,7 +34,5 @@ export async function run() {
     })
     .help().argv;
 
-  await tidier(options);
+  await tidier(options, args.map(String));
 }
-
-run();

@@ -46,7 +46,7 @@ export class FileDirectory implements Folder {
   }
 
   rename(oldPath: string, newPath: string): Promise<void> {
-    return fs.rename(oldPath, newPath);
+    return fs.rename(this.absolute(oldPath), this.absolute(newPath));
   }
 
   async entryType(path: string): Promise<EntryType | null> {
