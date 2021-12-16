@@ -17,9 +17,6 @@
   "workspaces": {
     "packages": [
       "packages/*"
-    ],
-    "nohoist": [
-      "**/tidier-*/**"
     ]
   },
   "devDependencies": {

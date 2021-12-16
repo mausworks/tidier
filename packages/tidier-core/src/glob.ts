@@ -5,6 +5,8 @@ const options: picomatch.PicomatchOptions = {
   nocase: true,
 } as const;
 
+type Matcher = (input: string) => boolean;
+
 /** A glob that quickly allows you to match paths towards a pattern. */
 export class Glob {
   /** The pattern that is being used for matching. */
@@ -13,7 +15,7 @@ export class Glob {
    * Determines whether the glob matches the path.
    * @param path The path to match towards the glob.
    */
-  readonly matches: picomatch.Matcher;
+  readonly matches: Matcher;
 
   /** A glob that matches any file or folder. */
   static readonly ANYTHING: Glob = {
