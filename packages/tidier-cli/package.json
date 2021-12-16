@@ -12,7 +12,8 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "test": "jest",
-    "build": "rimraf dist/ && rimraf *.tsbuildinfo && tsc -b tsconfig.production.json"
+    "build": "rimraf dist/ && rimraf *.tsbuildinfo && tsc -b tsconfig.production.json",
+    "release": "semantic-release --tag-format 'cli-v${version}'"
   },
   "dependencies": {
     "colors": "^1.4.0",
