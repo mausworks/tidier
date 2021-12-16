@@ -1,4 +1,4 @@
-import { Project, Projects } from "@tidier/lib";
+import { Project, Projects } from "tidier-core";
 import { basename } from "path";
 import { showErrorDialog } from "./ui";
 import * as output from "./output";

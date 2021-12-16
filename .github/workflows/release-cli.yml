@@ -1,10 +1,11 @@
 name: on-push
-on: 
+on:
   push:
-    branches-ignore: 
-      - 'main'
+    branches: [main]
+    paths:
+      - 'packages/tidier-cli/**/*'
 jobs:
-  test:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,11 +13,13 @@ jobs:
         with:
           node-version: '16'
       - run: yarn
-      - run: yarn lint:eslint
-      - run: yarn lint:prettier
       - run: yarn build:core
       - run: yarn build:test
       - run: yarn build:cli
       - run: yarn test:core
-      - run: yarn test:test
       - run: yarn test:cli
+      - run: yarn release:cli
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        

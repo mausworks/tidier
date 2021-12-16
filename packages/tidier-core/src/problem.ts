@@ -20,20 +20,24 @@ export interface ProblemDetails {
 /** Check if there are problems in the provided project. */
 export async function check(
   project: Project,
-  glob: Glob = Glob.ANYTHING
+  ...globs: Glob[]
 ): Promise<readonly Problem[]> {
+  globs = globs.length ? globs : [Glob.ANYTHING];
   const problems: Record<string, ProblemDetails> = Object.create(null);
-  const entries = await project.list(glob);
 
-  for (const [path, type] of entries) {
-    if (problems[path] !== undefined) {
-      continue;
-    }
+  for (const glob of globs) {
+    const entries = await project.list(glob);
 
-    const details = getProblemDetails(project, [path, type]);
+    for (const [path, type] of entries) {
+      if (problems[path] !== undefined) {
+        continue;
+      }
 
-    if (details) {
-      problems[path] = details;
+      const details = getProblemDetails(project, [path, type]);
+
+      if (details) {
+        problems[path] = details;
+      }
     }
   }
 

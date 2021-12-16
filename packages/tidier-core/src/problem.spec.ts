@@ -1,4 +1,4 @@
-import { InMemoryFolder } from "@tidier/test";
+import { InMemoryFolder } from "tidier-test";
 import { createProjectSettings, TidierConfig } from "./config";
 import { checkPath, getProblemDetails, ProblemDetails } from "./problem";
 import { Project } from "./project";

@@ -4,28 +4,29 @@
   "scripts": {
     "lint:prettier": "yarn prettier --ignore-path .gitignore --check 'packages/**/*.ts'",
     "lint:eslint": "yarn eslint --ignore-path .gitignore 'packages/**/*.ts'",
-    "build:lib": "cd packages/tidier-lib && yarn build",
+    "build:core": "cd packages/tidier-core && yarn build",
     "build:test": "cd packages/tidier-test && yarn build",
     "build:cli": "cd packages/tidier-cli && yarn build",
     "build:vscode": "cd packages/tidier-vscode && yarn build",
-    "test:lib": "cd packages/tidier-lib && yarn test",
+    "test:core": "cd packages/tidier-core && yarn test",
     "test:test": "cd packages/tidier-test && yarn test",
     "test:cli": "cd packages/tidier-cli && yarn test",
-    "release:lib": "cd packages/tidier-lib && yarn release"
+    "release:core": "cd packages/tidier-core && yarn release"
   },
   "workspaces": {
     "packages": [
       "packages/*"
     ],
     "nohoist": [
-      "**/@tidier/**"
+      "**/tidier-*/**"
     ]
   },
   "devDependencies": {
-    "prettier": "^2.5.1",
-    "eslint": "^8.4.1",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
+    "eslint": "^8.4.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "prettier": "^2.5.1",
     "semantic-release": "^18.0.1"
   }
 }

@@ -1,6 +1,6 @@
-import { Problem, Project } from "@tidier/lib";
+import { Project } from "tidier-core";
 import { basename } from "path";
-import { commands, languages, window, workspace } from "vscode";
+import { commands, window } from "vscode";
 import { TidierContext } from "./context";
 
 import * as output from "./output";

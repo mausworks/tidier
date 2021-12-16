@@ -1,5 +1,5 @@
 {
-  "$schema": "../../packages/tidier-lib/src/tidier.config.schema.json",
+  "$schema": "../../packages/tidier-core/src/tidier.config.schema.json",
   "files": {
     "**/src/setupTests.*": "camelCase.lc",
     "**/src/reportWebVitals.ts": "camelCase.lc",

@@ -1,7 +1,7 @@
 import { Dirent } from "fs";
 import fs from "fs/promises";
 import { dirname, join, resolve } from "path";
-import { disjoin, EntryType, Folder, FolderEntry } from "@tidier/lib";
+import { disjoin, EntryType, Folder, FolderEntry } from "tidier-core";
 
 export class FileDirectory implements Folder {
   readonly path: string;
@@ -46,7 +46,7 @@ export class FileDirectory implements Folder {
   }
 
   rename(oldPath: string, newPath: string): Promise<void> {
-    return fs.rename(oldPath, newPath);
+    return fs.rename(this.absolute(oldPath), this.absolute(newPath));
   }
 
   async entryType(path: string): Promise<EntryType | null> {

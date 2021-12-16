@@ -5,7 +5,7 @@ import {
   FolderEntry,
   withoutTrailingSlash,
   withTrailingSlash,
-} from "@tidier/lib";
+} from "tidier-core";
 import { posix } from "path";
 const { join, dirname } = posix;
 

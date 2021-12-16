@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { Project } from "@tidier/lib";
+import { Project } from "tidier-core";
 
 import { TidierProjectOptions } from "./options";
 import { FileDirectory } from "./directory";

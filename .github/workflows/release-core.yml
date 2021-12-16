@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packages/tidier-lib/**/*'
+      - 'packages/tidier-core/**/*'
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -13,10 +13,10 @@ jobs:
         with:
           node-version: '16'
       - run: yarn
-      - run: yarn build:lib
+      - run: yarn build:core
       - run: yarn build:test
-      - run: yarn test:lib
-      - run: yarn release:lib
+      - run: yarn test:core
+      - run: yarn release:core
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

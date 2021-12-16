@@ -1,5 +1,5 @@
 {
-  "name": "tidier",
+  "name": "tidier-vscode",
   "private": true,
   "displayName": "Tidier",
   "icon": "logo.png",
@@ -10,7 +10,7 @@
   },
   "publisher": "mausworks",
   "description": "The project formatter",
-  "version": "0.3.0",
+  "version": "0.0.0",
   "engines": {
     "vscode": "^1.59.0"
   },
@@ -95,7 +95,7 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
-    "copy-schema": "cp ../tidier-lib/src/.tidierrc.schema.json ./",
+    "copy-schema": "cp ../tidier-core/src/.tidierrc.schema.json ./",
     "build": "webpack",
     "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",
@@ -104,9 +104,6 @@
     "pretest": "yarn run test-compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
-  },
-  "workspaceDependencies": {
-    "@tidier/test": "*"
   },
   "devDependencies": {
     "@types/vscode": "^1.59.0",

@@ -1,4 +1,4 @@
-import { disjoin, EntryType, Folder, FolderEntry } from "@tidier/lib";
+import { disjoin, EntryType, Folder, FolderEntry } from "tidier-core";
 import { dirname, join } from "path";
 import { FileType, Uri, workspace } from "vscode";
 

@@ -1,5 +1,5 @@
 import fc from "fast-check";
-import { ap, InMemoryFolder } from "@tidier/test";
+import { ap, InMemoryFolder } from "tidier-test";
 
 import { createProjectSettings, ProjectSettings, TidierConfig } from "./config";
 import { Project } from "./project";
