@@ -9,6 +9,11 @@
   "engines": {
     "node": ">=14.17.0"
   },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
   "scripts": {
     "start": "node ./dist/index.js",
     "test": "jest",
