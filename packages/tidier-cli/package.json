@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "colors": "^1.4.0",
-    "yargs": "^17.0.1"
+    "yargs": "^17.0.1",
+    "tidier-core": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
