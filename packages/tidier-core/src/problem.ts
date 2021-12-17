@@ -26,17 +26,25 @@ export async function check(
   const problems: Record<string, ProblemDetails> = Object.create(null);
 
   for (const glob of globs) {
-    const entries = await project.list(glob);
-
-    for (const [path, type] of entries) {
-      if (problems[path] !== undefined) {
-        continue;
-      }
-
-      const details = getProblemDetails(project, [path, type]);
+    if (glob.isPath && !problems[glob.pattern]) {
+      const details = await checkPath(project, glob.pattern);
 
       if (details) {
-        problems[path] = details;
+        problems[glob.pattern] = details;
+      }
+    } else if (!glob.isPath) {
+      const entries = await project.list(glob);
+
+      for (const [path, type] of entries) {
+        if (problems[path] !== undefined) {
+          continue;
+        }
+
+        const details = getProblemDetails(project, [path, type]);
+
+        if (details) {
+          problems[path] = details;
+        }
       }
     }
   }

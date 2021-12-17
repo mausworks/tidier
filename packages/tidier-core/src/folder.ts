@@ -36,6 +36,12 @@ export const withTrailingSlash = (path: string) =>
 export const withoutTrailingSlash = (path: string) =>
   path.endsWith("/") ? path.substring(0, path.length - 1) : path;
 
+export const withoutLeadingSlash = (path: string) =>
+  path.startsWith("/") ? path.substring(1) : path;
+
+export const withLeadingSlash = (path: string) =>
+  path.startsWith("/") ? path : "/" + path;
+
 /**
  * Gets a relative path from two overlapping absolute paths: the inverse of `join()`.
  * If `path` is not a direct sub-path of `root`, an error is thrown.
@@ -49,7 +55,7 @@ export function disjoin(root: string, path: string) {
   if (path === root || withTrailingSlash(path) === root) {
     return "";
   } else if (path.startsWith(root)) {
-    return path.substr(root.length);
+    return path.substring(root.length);
   } else {
     throw new Error(`The path '${path}' is not a subpath of '${root}'.`);
   }

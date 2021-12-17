@@ -43,26 +43,29 @@ Navigate to your project and run:
 
 ## Usage
 
-To check for problems, run:
+To check for problems within a project:
 
 ```sh
 tidier -c
 ```
 
-To fix problems, run:
+To fix all problems:
 
 ```sh
 tidier -w
 ```
 
-You may additionally specify glob patterns relative to the root of the project:
+### Checking specific entries
+
+If you want to check specific entries within a project, 
+you can specify a list of paths, either via glob expansion or by providing multiple path arguments to the CLI.
 
 ```sh
-tidier -w '**/*.ts'
+# Check Foo.ts and Bar.ts in the CWD
+tidier -c Foo.ts Bar.ts
+# Check all TS files relative to the CWD
+tidier -c '**/*.ts'
 ```
 
-The CLI also accepts an options for specifying the project explicitly:
-
-```sh
-tidier -p ~/git/my-project -c
-```
+To prevent passing too many arguments into tidier (and hitting the OS `ARG_MAX` limit),
+you should always quote your glob patterns before passing them to Tidier.
