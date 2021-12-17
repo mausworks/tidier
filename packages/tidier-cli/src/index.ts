@@ -20,7 +20,7 @@ export default async function run() {
       alias: "c",
       describe: "Check for problems within the project.",
       demandOption: false,
-      default: false,
+      default: true,
       type: "boolean",
     })
     .option("project", {
