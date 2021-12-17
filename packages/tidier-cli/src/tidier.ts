@@ -6,11 +6,11 @@ import { write } from "./write";
 export async function tidier(options: TidierCLIOptions, globs: string[]) {
   const project = await projectFromOptions(options);
 
-  if (options.check) {
+  if (options.write) {
+    await write(project, globs);
+  } else if (options.check) {
     const exitCode = await checkAndReport(project, globs);
 
     process.exit(exitCode);
-  } else if (options.write) {
-    await write(project, globs);
   }
 }

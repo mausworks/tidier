@@ -42,3 +42,16 @@ test("different paths do not match each other", () => {
 test("ANYTHING matches any string", () => {
   fc.assert(fc.property(fc.string(), Glob.ANYTHING.matches));
 });
+
+test("prefixing glob patterns", () => {
+  const tests = [
+    [["foo", "!**/*.ts"], "!foo/**/*.ts"],
+    [["/foo/", "!/**/*.ts"], "!/foo/**/*.ts"],
+    [["/", "foo/bar"], "foo/bar"],
+    [["", "foo/bar"], "foo/bar"],
+  ];
+
+  for (const [[path, pattern], result] of tests) {
+    expect(Glob.within(path, pattern).pattern).toBe(result);
+  }
+});
