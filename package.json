@@ -2,8 +2,10 @@
   "name": "tidier",
   "private": true,
   "scripts": {
+    "tidier": "packages/tidier-cli/tidier",
     "lint:prettier": "yarn prettier --ignore-path .gitignore --check 'packages/**/*.ts'",
     "lint:eslint": "yarn eslint --ignore-path .gitignore 'packages/**/*.ts'",
+    "lint:tidier": "yarn tidier 'packages/**/*.ts'",
     "build:core": "cd packages/tidier-core && yarn build",
     "build:test": "cd packages/tidier-test && yarn build",
     "build:cli": "cd packages/tidier-cli && yarn build",
