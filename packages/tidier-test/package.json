@@ -7,7 +7,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest --coverage",
-    "build": "rimraf dist/ && rimraf *.tsbuildinfo && tsc -b tsconfig.production.json",
+    "build": "rimraf dist/ *.tsbuildinfo && tsc -b tsconfig.production.json",
     "terser": "terser"
   },
   "dependencies": {
