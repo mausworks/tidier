@@ -2,8 +2,9 @@ name: on-push
 on:
   push:
     branches: [main]
-    paths:
+    paths: 
       - 'packages/tidier-core/**/*'
+      - 'packages/tidier-cli/**/*'
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -14,9 +15,12 @@ jobs:
           node-version: '16'
       - run: yarn
       - run: yarn build:core
+      - run: yarn build:cli
       - run: yarn build:test
       - run: yarn test:core
+      - run: yarn test:cli
       - run: yarn release:core
+      - run: yarn release:cli
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
