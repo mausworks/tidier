@@ -18,6 +18,7 @@
     "start": "node ./dist/index.js",
     "test": "jest",
     "build": "rimraf dist/ && rimraf *.tsbuildinfo && tsc -b tsconfig.production.json",
+    "prepare": "yarn upgrade tidier-core --latest",
     "release": "semantic-release --tag-format 'cli-v${version}'"
   },
   "dependencies": {

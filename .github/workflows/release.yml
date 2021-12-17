@@ -15,11 +15,12 @@ jobs:
           node-version: '16'
       - run: yarn
       - run: yarn build:core
-      - run: yarn build:cli
       - run: yarn build:test
       - run: yarn test:core
       - run: yarn test:cli
       - run: yarn release:core
+      - run: yarn prepare:cli
+      - run: yarn build:cli
       - run: yarn release:cli
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
