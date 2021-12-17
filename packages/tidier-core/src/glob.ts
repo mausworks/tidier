@@ -8,7 +8,7 @@ const options: picomatch.PicomatchOptions = {
 
 type PathMatcher = (path: string) => boolean;
 
-/** A glob that quickly allows you to match paths towards a pattern. */
+/** A glob that quickly allows for matching paths. */
 export class Glob {
   /** The pattern that is being used for matching. */
   readonly pattern: string;
