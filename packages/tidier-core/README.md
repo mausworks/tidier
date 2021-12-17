@@ -4,7 +4,7 @@ These are the core abstractions used for the [Tidier CLI](https://npmjs.org/pack
 
 ## Getting started
 
-If you want to make use of Tidier in your own projects without using the CLI,
+If you want to integrate Tidier in your own projects without using the CLI,
 you first need to implement the Folder interface for your project.
 
 To facilitate cross-platform compatibility, these core abstractions does not have a concrete implementation.
