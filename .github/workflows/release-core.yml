@@ -1,0 +1,35 @@
+#
+# When tidier-core is updated, all dependent packages are released as well,
+# regardless of whether dependent packages were touched.
+#
+
+name: on-push
+on:
+  push:
+    branches: [main]
+    paths: 
+      - 'packages/tidier-core/**/*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: yarn
+      - run: yarn build:core
+      - run: yarn build:test
+      - run: yarn test:core
+      - run: yarn test:cli
+      - run: yarn release:core
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: yarn prepare:cli
+      - run: yarn build:cli
+      - run: yarn release:cli
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
