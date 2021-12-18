@@ -20,7 +20,7 @@ export class Project {
   readonly folder: Folder;
 
   #conventions: ProjectConventions;
-  #ignore: Ignore;
+  #ignored: Ignore;
 
   get conventions() {
     return this.#conventions;
@@ -97,11 +97,11 @@ export class Project {
 
   /** Returns whether the path is ignored within the project. */
   ignores(path: string): boolean {
-    return this.#ignore.ignores(path);
+    return this.#ignored.ignores(path);
   }
 
   #applySettings(settings: ProjectSettings) {
-    this.#ignore = ignore({ ignorecase: true }).add(settings.ignore);
+    this.#ignored = ignore({ ignorecase: true }).add(settings.ignore);
     this.#conventions = {
       file: settings.fileConventions,
       folder: settings.folderConventions,
