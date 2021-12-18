@@ -10,6 +10,8 @@
     "node": ">=14.17.0"
   },
   "release": {
+    "extends": "semantic-release-monorepo",
+    "tagFormat": "cli-v${version}",
     "branches": [
       "main"
     ]
@@ -19,7 +21,7 @@
     "test": "jest",
     "build": "rimraf dist/ *.tsbuildinfo && tsc -b tsconfig.production.json",
     "prepare": "yarn upgrade tidier-core --latest",
-    "release": "semantic-release --tag-format 'cli-v${version}'"
+    "release": "semantic-release"
   },
   "dependencies": {
     "colors": "^1.4.0",
