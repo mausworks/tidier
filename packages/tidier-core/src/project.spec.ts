@@ -48,7 +48,7 @@ describe("project creation", () => {
     );
   });
 
-  it("reads the .gitignore files from the project root when using `fromConfig`", async () => {
+  it("reads the .gitignore files from the project root when using `load` without any options", async () => {
     await fc.assert(
       fc.asyncProperty(
         ap.folder(true),
