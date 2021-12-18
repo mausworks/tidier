@@ -1,5 +1,4 @@
 import { join } from "path";
-import ignore, { Ignore } from "ignore";
 
 import { NameConvention } from "./convention";
 import { ProjectSettings } from "./config";
@@ -10,17 +9,44 @@ import {
   TIDIER_CONFIG_NAME,
 } from "./config";
 import { EntryType, Folder, FolderEntry } from "./folder";
+import { Ignorefile, ProjectIgnore } from "./ignore";
 
 /** Boy, you do not want to look in these ... */
 const ALWAYS_IGNORE = ["**/.git"];
 
 export type ProjectConventions = Record<EntryType, readonly NameConvention[]>;
 
+export interface ProjectLoadOptions {
+  /**
+   * Paths to ignorefiles; such as .gitignore, .eslintignore or .npmignore,
+   * relative to the project root.
+   *
+   * Tidier will include the patterns
+   * specified in these files and never check
+   * or attempt fixes for entries matching them.
+   */
+  ignorefiles?: readonly string[];
+}
+
+export interface ProjectSearchOptions extends ProjectLoadOptions {
+  /** The maximum number of parent directories to search. */
+  levels?: number;
+}
+
+const DEFAULT_LOAD_OPTS: Required<ProjectLoadOptions> = Object.freeze({
+  ignorefiles: [".gitignore"],
+});
+
+const DEFAULT_SEARCH_OPTS: Required<ProjectSearchOptions> = Object.freeze({
+  ...DEFAULT_LOAD_OPTS,
+  levels: 5,
+});
+
 export class Project {
   readonly folder: Folder;
+  readonly ignore: ProjectIgnore = new ProjectIgnore();
 
   #conventions: ProjectConventions;
-  #ignored: Ignore;
 
   get conventions() {
     return this.#conventions;
@@ -28,27 +54,43 @@ export class Project {
 
   constructor(folder: Folder, settings: ProjectSettings) {
     this.folder = folder;
-    this.#applySettings(settings);
+    this.#useSettings(settings);
   }
 
   /**
    * Loads a project from a folder where a `.tidierrc` is located.
-   * Also also loads the `.gitignore` if one exists at the root of the folder.
-   * @param folder The folder to load the project from.
+   * @param folder The folder to load the project from
+   * @param options Additional load options
    */
-  static async load(folder: Folder): Promise<Project> {
+  static async load(
+    folder: Folder,
+    options?: ProjectLoadOptions
+  ): Promise<Project> {
+    const { ignorefiles } = { ...DEFAULT_LOAD_OPTS, ...options };
     const settings = await loadProjectSettings(folder);
+    const project = new Project(folder, settings);
 
-    return new Project(folder, settings);
+    for (const path of ignorefiles) {
+      const ignorefile = await Ignorefile.load(folder, path);
+
+      project.ignore.useIgnorefile(ignorefile);
+    }
+
+    return project;
   }
 
   /**
    * Attempts to locate the nearest project to a given folder,
    * by searching the provided folder and its parents for a `.tidierrc`.
-   * @param path The folder from which you want to search from.
-   * @param levels The maximum number of parents to search.
+   * @param path The folder from which you want to search from
+   * @param options Additional load and search options
    */
-  static async near(folder: Folder, levels = 5): Promise<Project | null> {
+  static async near(
+    folder: Folder,
+    options?: ProjectSearchOptions
+  ): Promise<Project | null> {
+    const { levels, ...loadOptions } = { ...DEFAULT_SEARCH_OPTS, ...options };
+
     if (levels === 0) {
       return null;
     }
@@ -56,12 +98,12 @@ export class Project {
     const configType = await folder.entryType(TIDIER_CONFIG_NAME);
 
     if (configType === "file") {
-      return Project.load(folder);
+      return Project.load(folder, loadOptions);
     } else {
       const parent = folder.parent();
 
       if (parent) {
-        return Project.near(parent, --levels);
+        return Project.near(parent, { ...options, levels: levels - 1 });
       }
     }
 
@@ -69,12 +111,13 @@ export class Project {
   }
 
   /**
-   * Reloads the project settings.
-   * This is useful for when the config or .gitignore has been updated, and you want to reload it.
+   * Reloads the project with the options it was loaded with.
+   * This is useful for when the config or an ignorefile has been updated.
    */
   async reload(): Promise<void> {
     const settings = await loadProjectSettings(this.folder);
-    this.#applySettings(settings);
+    await this.ignore.reload();
+    this.#useSettings(settings);
   }
 
   /**
@@ -97,15 +140,15 @@ export class Project {
 
   /** Returns whether the path is ignored within the project. */
   ignores(path: string): boolean {
-    return this.#ignored.ignores(path);
+    return this.ignore.ignores(path);
   }
 
-  #applySettings(settings: ProjectSettings) {
-    this.#ignored = ignore({ ignorecase: true }).add(settings.ignore);
+  #useSettings(settings: ProjectSettings) {
     this.#conventions = {
       file: settings.fileConventions,
       folder: settings.folderConventions,
     };
+    this.ignore.use(settings.ignore);
   }
 
   async #collect(
@@ -153,23 +196,10 @@ export class Project {
   }
 }
 
-async function loadProjectSettings(folder: Folder) {
+async function loadProjectSettings(folder: Folder): Promise<ProjectSettings> {
   const configData = await folder.readFile(TIDIER_CONFIG_NAME);
   const { ignore = [], ...conventions } = parseConfig(configData);
-  const gitignore = await readGitignore(folder);
-  const allIgnores = [...ALWAYS_IGNORE, ...ignore, ...gitignore];
+  const allIgnores = [...ALWAYS_IGNORE, ...ignore];
 
   return createProjectSettings({ ...conventions, ignore: allIgnores });
-}
-
-export async function readGitignore(
-  folder: Folder
-): Promise<readonly string[]> {
-  try {
-    const lines = await folder.readFile(".gitignore", "utf-8");
-
-    return lines.split("\n").filter((l) => l.trim() && !l.startsWith("#"));
-  } catch {
-    return [];
-  }
 }

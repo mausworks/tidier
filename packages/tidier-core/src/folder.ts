@@ -1,5 +1,7 @@
 export type EntryType = "file" | "folder";
 
+export type PathMatcher = (path: string) => boolean;
+
 export type FolderEntry = readonly [string, EntryType];
 
 export interface Folder {
