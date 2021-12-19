@@ -1,4 +1,4 @@
-import { resolve } from "path/posix";
+import { resolve } from "path";
 import { Project, check, fix, Glob } from "tidier-core";
 import { formatRecase } from "./output";
 
