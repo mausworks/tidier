@@ -1,0 +1,6 @@
+src/
+coverage/
+jest.config.js
+tsconfig.json
+tsconfig.production.json
+*.tsbuildinfo
