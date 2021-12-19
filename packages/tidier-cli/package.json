@@ -20,7 +20,7 @@
     "start": "node ./dist/index.js",
     "test": "jest",
     "build": "rimraf dist/ *.tsbuildinfo && tsc -b tsconfig.production.json",
-    "prepare": "yarn upgrade tidier-core --latest",
+    "prepare": "yarn upgrade tidier-core@latest --latest",
     "release": "semantic-release"
   },
   "dependencies": {
