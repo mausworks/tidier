@@ -5,6 +5,7 @@ on:
     paths: 
       - 'packages/tidier-core/**/*'
       - 'packages/tidier-cli/**/*'
+      - 'packages/tidier-vscode/**/*'
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -18,14 +19,26 @@ jobs:
       - run: yarn build:test
       - run: yarn test:core
       - run: yarn test:cli
+      - run: yarn test:vscode
+
+      # Release the Core Abstractions (if needed)
       - run: yarn release:core
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Release the CLI (if needed)
       - run: yarn prepare:cli
       - run: yarn build:cli
       - run: yarn release:cli
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        
+
+      # Release the VSCode extension (if needed)
+      - run: yarn prepare:vscode
+      - run: yarn package:vscode
+      - run: yarn release:vscode
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}

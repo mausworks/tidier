@@ -9,6 +9,7 @@
     "build:test": "cd packages/tidier-test && yarn build",
     "build:cli": "cd packages/tidier-cli && yarn build",
     "build:vscode": "cd packages/tidier-vscode && yarn build",
+    "package:vscode": "cd packages/tidier-vscode && yarn package",
     "test:core": "cd packages/tidier-core && yarn test",
     "test:test": "cd packages/tidier-test && yarn test",
     "test:cli": "cd packages/tidier-cli && yarn test",
