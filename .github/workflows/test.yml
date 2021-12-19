@@ -1,4 +1,4 @@
-name: on-push
+name: test
 on: 
   push:
     branches-ignore: 

@@ -1,13 +1,19 @@
-# Tidier - The workspace formatter
+# Tidier - The project formatter
 
-Tidier helps you keep your projects & workspaces clean automatically renaming files to keep a consistent format
+_Tools for keeping your projects tidier!_
+
+[![tidier version](https://img.shields.io/npm/v/tidier?logo=npm&label=tidier)](https://www.npmjs.com/package/tidier)&nbsp;
+[![tidier-core version](https://img.shields.io/npm/v/tidier-core?logo=npm&label=tidier-core)](https://www.npmjs.com/package/tidier-core)&nbsp;
+[![Release status](https://img.shields.io/github/workflow/status/mausworks/tidier/release?event=push&logoColor=ffffff&logo=github-actions&label=Release)](https://github.com/mausworks/tidier/actions/workflows/release.yml)&nbsp;
+[![Test status](https://img.shields.io/github/workflow/status/mausworks/tidier/release?event=push&logoColor=ffffff&logo=github-actions&label=Tests)](https://github.com/mausworks/tidier/actions/workflows/test.yml)
 
 https://user-images.githubusercontent.com/8259221/126910139-162c5e89-b2c7-403a-8c9d-0091a229fe0d.mp4
 
 ## Configuration
 
-Create a `.tidierrc` at the root of your project.
-Here is an example which is made to work with most a React projects, 
+To start using Tidier, add a `.tidierrc` to the root of your project.
+
+Below is an example configuration that works well with most React projects,
 it should serve as a good baseline for whatever project you are currently working on.
 
 ```json
@@ -32,8 +38,8 @@ it should serve as a good baseline for whatever project you are currently workin
 }
 ```
 
-The configuration consists two sets of name conventions: one for files, and one for folders. 
-The first glob that matches gets priority, so more specific name conventions should be specified at the top.
+The configuration consists two sets of naming conventions: one for files, and one for folders. 
+The first glob that matches gets priority, so the more specific conventions should be specified at the top.
 
 If you want to learn more about how Tidier applies name conventions to files and folders, 
 then just keep reading below!
