@@ -17,6 +17,7 @@ jobs:
       - run: yarn build:core
       - run: yarn build:test
       - run: yarn build:cli
+      - run: yarn build:vscode
       - run: yarn test:core
       - run: yarn test:test
       - run: yarn test:cli
