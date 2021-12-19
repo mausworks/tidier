@@ -1,18 +1,10 @@
-#
-# This action runs when `tidier-cli` has been changed,
-# but `tidier-core` has not. When `tidier-core` changes,
-# all packages are re-released with the new version,
-# regardless if the code for the dependent project changed or not.
-#
-
-name: on-push
+name: release
 on:
   push:
     branches: [main]
     paths: 
-      # Run if tidier-cli has changed but NOT if core has changed.
-      # In this case, release-core will run instead, releasing CLI as well.
-      - '{packages/tidier-cli/**/*,!packages/tidier-core/**/*}'
+      - 'packages/tidier-core/**/*'
+      - 'packages/tidier-cli/**/*'
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -24,6 +16,12 @@ jobs:
       - run: yarn
       - run: yarn build:core
       - run: yarn build:test
+      - run: yarn test:core
+      - run: yarn test:cli
+      - run: yarn release:core
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: yarn prepare:cli
       - run: yarn build:cli
       - run: yarn release:cli
