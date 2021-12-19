@@ -6,16 +6,18 @@
     "lint:eslint": "yarn eslint --ignore-path .gitignore 'packages/**/*.ts'",
     "lint:tidier": "yarn tidier 'packages/**/*.ts'",
     "build:core": "cd packages/tidier-core && yarn build",
-    "build:test": "cd packages/tidier-test && yarn build",
-    "build:cli": "cd packages/tidier-cli && yarn build",
-    "build:vscode": "cd packages/tidier-vscode && yarn build",
-    "package:vscode": "cd packages/tidier-vscode && yarn package",
     "test:core": "cd packages/tidier-core && yarn test",
-    "test:test": "cd packages/tidier-test && yarn test",
-    "test:cli": "cd packages/tidier-cli && yarn test",
     "release:core": "cd packages/tidier-core && yarn release",
+    "build:test": "cd packages/tidier-test && yarn build",
+    "test:test": "cd packages/tidier-test && yarn test",
+    "build:cli": "cd packages/tidier-cli && yarn build",
+    "test:cli": "cd packages/tidier-cli && yarn test",
     "prepare:cli": "cd packages/tidier-cli && yarn prepare",
-    "release:cli": "cd packages/tidier-cli && yarn release"
+    "release:cli": "cd packages/tidier-cli && yarn release",
+    "build:vscode": "cd packages/tidier-vscode && yarn build",
+    "prepare:vscode": "cd packages/tidier-vscode && yarn prepare",
+    "package:vscode": "cd packages/tidier-vscode && yarn package",
+    "release:vscode": "cd packages/tidier-vscode && yarn release"
   },
   "workspaces": {
     "packages": [
