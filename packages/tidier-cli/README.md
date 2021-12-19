@@ -69,3 +69,12 @@ tidier -c '**/*.ts'
 
 To prevent passing too many arguments into tidier (and hitting the OS `ARG_MAX` limit),
 you should always quote your glob patterns before passing them to Tidier.
+
+### Using a specific ignorefile
+
+By default, the CLI will load the .gitignore at the root of your project.
+To override this, specify the `--ignore-path`.
+
+```sh
+tidier -c --ignore-path .npmignore --ignore-path .eslintignore
+```
