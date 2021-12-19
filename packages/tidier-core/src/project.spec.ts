@@ -1,6 +1,3 @@
-jest.mock("fs");
-jest.mock("fs/promises");
-
 import { join } from "path";
 import fc from "fast-check";
 import { ap, InMemoryFolder } from "tidier-test";
@@ -51,7 +48,7 @@ describe("project creation", () => {
     );
   });
 
-  it("reads the .gitignore files from the project root when using `fromConfig`", async () => {
+  it("reads the .gitignore files from the project root when using `load` without any options", async () => {
     await fc.assert(
       fc.asyncProperty(
         ap.folder(true),
@@ -66,6 +63,43 @@ describe("project creation", () => {
 
           for (const path of ignore) {
             expect(project.ignores(path)).toBe(true);
+          }
+        }
+      )
+    );
+  });
+
+  it("reads the specified ignorefiles on `load`", async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        ap.folder(true),
+        fc.array(
+          fc.tuple(
+            ap.filePath(),
+            fc.set(fc.oneof(ap.folder(), ap.filePath()), { minLength: 1 })
+          ),
+          { minLength: 2 }
+        ),
+        async (rootPath, ignorefiles) => {
+          const folder = seedFolder(rootPath, [], []);
+          const readFileSpy = jest.spyOn(folder, "readFile");
+          const configPath = join(rootPath, TIDIER_CONFIG_NAME);
+          folder.volume[configPath] = JSON.stringify(basicJSONConfig);
+
+          for (const [path, lines] of ignorefiles) {
+            folder.volume[join(rootPath, path)] = lines.join("\n");
+          }
+
+          const project = await Project.load(folder, {
+            ignorefiles: ignorefiles.map(([path]) => path),
+          });
+
+          for (const [ignorefilePath, lines] of ignorefiles) {
+            expect(readFileSpy).toHaveBeenCalledWith(ignorefilePath);
+
+            for (const path of lines) {
+              expect(project.ignores(path)).toBe(true);
+            }
           }
         }
       )

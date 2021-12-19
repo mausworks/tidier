@@ -2,6 +2,7 @@ import fc from "fast-check";
 import { Glob } from "./glob";
 
 import { ap } from "tidier-test";
+import { join } from "path";
 
 const matches = {
   "*": ["foo", "bar", "baz", "bat"],
@@ -37,6 +38,44 @@ test("different paths do not match each other", () => {
       ([one, theNext]) => !new Glob(one).matches(theNext)
     )
   );
+});
+
+test('patterns starts with "!" sets `negates` to true', () => {
+  expect(new Glob("!foo/bar").negates).toBe(true);
+});
+
+describe("appending a prefix to the glob", () => {
+  it("appends the prefix to the path", () => {
+    fc.assert(
+      fc.property(
+        ap.folder(),
+        fc.array(fc.oneof(ap.folder(), ap.filePath())),
+        (prefix, paths) => {
+          for (const path of paths) {
+            const glob = Glob.within(prefix, path);
+
+            expect(glob.pattern).toBe(join(prefix, path));
+          }
+        }
+      )
+    );
+  });
+
+  it('preserves the "!" at the start for negating patterns', () => {
+    fc.assert(
+      fc.property(
+        ap.folder(),
+        fc.array(fc.oneof(ap.folder(), ap.filePath())),
+        (prefix, paths) => {
+          for (const path of paths) {
+            const glob = Glob.within(prefix, "!" + path);
+
+            expect(glob.pattern).toBe("!" + join(prefix, path));
+          }
+        }
+      )
+    );
+  });
 });
 
 test("ANYTHING matches any string", () => {

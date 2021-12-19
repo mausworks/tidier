@@ -32,6 +32,13 @@ export default async function run() {
         `A '${TIDIER_CONFIG_NAME}' has to be located in (or above) this folder. ` +
         `By default; this is the location of the nearest '${TIDIER_CONFIG_NAME}.`,
     })
+    .option("ignore-path", {
+      type: "array",
+      default: [".gitignore"],
+      describe:
+        "Path to a file with patterns describing which entries to ignore." +
+        "Defaults to .gitignore at the project root.",
+    })
     .help().argv;
 
   await tidier(options, args.map(String));

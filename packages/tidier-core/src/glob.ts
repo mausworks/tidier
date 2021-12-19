@@ -1,12 +1,10 @@
 import picomatch from "picomatch";
-import { withoutLeadingSlash, withTrailingSlash } from "./folder";
+import { PathMatcher, withoutLeadingSlash, withTrailingSlash } from "./folder";
 
 const options: picomatch.PicomatchOptions = {
   dot: true,
   nocase: true,
 } as const;
-
-type PathMatcher = (path: string) => boolean;
 
 /** A glob that quickly allows for matching paths. */
 export class Glob {
@@ -24,10 +22,16 @@ export class Glob {
    */
   readonly isPath: boolean;
 
+  /** Returns true if this is a negating pattern, e.g. `!foo/*`. */
+  get negates() {
+    return this.pattern[0] === "!";
+  }
+
   /** A glob that matches any file or folder. */
   static readonly ANYTHING: Glob = Object.freeze({
     pattern: "**/*",
     isPath: false,
+    negates: false,
     matches: () => true,
   });
 

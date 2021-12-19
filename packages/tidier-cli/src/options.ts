@@ -11,7 +11,15 @@ export interface TidierProjectOptions {
    *
    * If a nearby root cannot be resolved, the application will err.
    */
-  readonly project?: string;
+  readonly "project"?: string;
+  /**
+   * Paths to ignorefiles; such as .gitignore or .eslintignore.
+   *
+   * Tidier will include the patterns
+   * specified in these files and never check
+   * or attempt fixes for entries matching them.
+   */
+  readonly "ignore-path": readonly string[];
 }
 
 /** Actions that can be performed by the CLI. */
@@ -20,11 +28,6 @@ export interface TidierCLIActions {
   readonly check?: boolean;
   /** If true, write fixes for problems to the project. */
   readonly write?: boolean;
-  /**
-   * If true, files and folders within the project will be watched for problems.
-   * Combine with `check` or `write` to get automatic linting linting and fixes.
-   */
-  readonly watch?: boolean;
 }
 
 /** A combination of all the available options for the Tidier CLI. */
