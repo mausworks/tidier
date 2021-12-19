@@ -73,7 +73,7 @@ export class Ignorefile {
     return new Ignorefile({ path, patterns, semantics, folder });
   }
 
-  #usePatterns(patterns: string[]) {
+  #usePatterns(patterns: readonly string[]) {
     this.#ignores =
       this.semantics === "gitignore"
         ? gitignoreMatcher(patterns)
@@ -147,13 +147,13 @@ async function readPatterns(folder: Folder, path: string) {
   }
 }
 
-function gitignoreMatcher(patterns: string[]): PathMatcher {
+function gitignoreMatcher(patterns: readonly string[]): PathMatcher {
   const ignores = gitignore({ ignorecase: true }).add(patterns);
 
   return (path) => ignores.ignores(path);
 }
 
-function globMatcher(patterns: string[]): PathMatcher {
+function globMatcher(patterns: readonly string[]): PathMatcher {
   const globs = patterns.map((pattern) => new Glob(pattern));
   const negates = globs.filter((glob) => glob.negates);
   const matches = globs.filter((glob) => !glob.negates);
