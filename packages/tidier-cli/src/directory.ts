@@ -1,7 +1,7 @@
 import { Dirent } from "fs";
 import fs from "fs/promises";
-import { dirname, join, resolve } from "path";
-import { disjoin, EntryType, Folder, FolderEntry } from "tidier-core";
+import { dirname, resolve, relative } from "path";
+import { EntryType, Folder, FolderEntry } from "tidier-core";
 
 export class FileDirectory implements Folder {
   readonly path: string;
@@ -27,11 +27,11 @@ export class FileDirectory implements Folder {
   }
 
   absolute(path: string) {
-    return join(this.path, path);
+    return resolve(this.path, path);
   }
 
   relative(path: string) {
-    return disjoin(this.path, path);
+    return relative(this.path, path);
   }
 
   child(path: string): Folder {
