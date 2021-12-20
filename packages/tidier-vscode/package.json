@@ -3,6 +3,7 @@
   "private": true,
   "displayName": "Tidier",
   "icon": "logo.png",
+  "homepage": "https://github.com/mausworks/tidier",
   "repository": {
     "type": "git",
     "url": "https://github.com/mausworks/tidier",
