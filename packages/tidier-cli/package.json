@@ -4,6 +4,12 @@
   "description": "A CLI for keeping your projects tidier",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
+  "homepage": "https://github.com/mausworks/tidier",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mausworks/tidier",
+    "directory": "packages/tidier-cli"
+  },
   "main": "dist/index.js",
   "bin": "tidier",
   "engines": {
