@@ -63,7 +63,7 @@ const projects = await Projects.discover(folder);
 ```
 
 You can then add projects with `projects.add(project)` remove projects with `projects.remove(path)`,
-and combine projects with `projects.combine(projects)`.
+and combine projects with `projects.combine(otherProjects)`.
 
 Since the `Projects` class manages multiple projects without any inherent hierarchy, 
 all paths that are accepted by its methods must be absolute.
@@ -109,7 +109,7 @@ const details = checkPath(project, "packages/package-a/src/FooBar.ts");
 
 #### Fixing problems
 
-Once you have checked for problems withing a project, you can fix them using the `fix` function.
+Once you have checked for problems within a project, you can fix them using the `fix` function.
 
 ```typescript
 for (const [path, details] of problems) {

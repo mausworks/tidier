@@ -5,9 +5,11 @@
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",
-  "private": false,
-  "publishConfig": {
-    "access": "public"
+  "homepage": "https://github.com/mausworks/tidier",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mausworks/tidier",
+    "directory": "packages/tidier-core"
   },
   "release": {
     "extends": "semantic-release-monorepo",
