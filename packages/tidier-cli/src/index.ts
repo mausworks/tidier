@@ -5,13 +5,10 @@ import { tidier } from "./tidier";
 
 export default async function run() {
   const { _: args, ...options } = yargs(process.argv.slice(2))
-    .usage(
-      "Usage: tidier [options] [...globs]\n\n" +
-        "The provided globs are always relative to the project: consider quoting them."
-    )
+    .usage("Usage: tidier [options] [...globs]")
     .options("write", {
       alias: "w",
-      describe: "Write fixes to problems to the project.",
+      describe: "Write problem fixes to the project.",
       demandOption: false,
       default: false,
       type: "boolean",
