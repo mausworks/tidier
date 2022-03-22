@@ -16,6 +16,9 @@ To start using Tidier, add a `.tidierrc` to the root of your project.
 Below is an example configuration that works well with most React projects,
 it should serve as a good baseline for whatever project you are currently working on.
 
+By default, Tidier will ignore files specified in your project's `.gitignore`,
+but you can add additional patterns in the "ignore"-section in the configuration file if need be.
+
 ```json
 {
   "ignore": [ "**/build" ],
