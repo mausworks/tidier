@@ -125,7 +125,7 @@ it is advisable to pass a third argument (`overwrite`) into `fix`,
 otherwise the fix is likely to not be applied, and an error will be thrown instead.
 
 ```typescript
-const overwrite = process.env === "win32"
+const overwrite = process.platform === "win32"
 
 await fix(project, [path, details], overwrite);
 ```
