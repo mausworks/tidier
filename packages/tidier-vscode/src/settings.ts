@@ -11,6 +11,7 @@ const severityMap: Record<string, DiagnosticSeverity> = {
 const section = workspace.getConfiguration;
 
 type FeatureType = "all" | "files" | "folders" | "none";
+type RenameOverwriteFeature = "auto" | "always" | "never";
 
 export const isEnabledFor = (feature: FeatureType, entry: EntryType) =>
   feature === "all"
@@ -36,4 +37,12 @@ export const problems = {
 
     return severityMap[value] ?? DiagnosticSeverity.Information;
   },
+};
+
+export const renameOverwrite = {
+  enabled: () =>
+    section("tidier.renameOverwrite.enabled").get<RenameOverwriteFeature>(
+      "enabled",
+      "auto"
+    ),
 };

@@ -82,6 +82,20 @@
             "warning",
             "error"
           ]
+        },
+        "tidier.renameOverwrite.enabled": {
+          "default": "auto",
+          "description": "Allow Tidier to overwrite files when renaming.",
+          "enumDescriptions": [
+            "Enable rename overwrites on Windows & MacOS where it is required for the extension to function",
+            "Never allow Tidier to overwrite files by renaming",
+            "Always allow Tidier to overwrite files by renaming"
+          ],
+          "enum": [
+            "auto",
+            "never",
+            "always"
+          ]
         }
       }
     },
