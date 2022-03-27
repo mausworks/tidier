@@ -5,7 +5,6 @@ import {
   FileDeleteEvent,
   ExtensionContext,
   Disposable,
-  Uri,
   FileCreateEvent,
   FileRenameEvent,
   TextDocument,
@@ -53,24 +52,6 @@ export function deactivate() {
   output.unregisterOutputChannel();
 
   disposables.forEach((disposable) => disposable.dispose());
-}
-
-async function resolveInProject(uri: Uri) {
-  const project = tidier.projects.bestMatch(uri.path);
-
-  if (project) {
-    const relative = project.folder.relative(uri.path);
-    const type = await project.folder.entryType(relative);
-
-    if (type) {
-      return [project, type];
-    } else {
-      output.log(`Cannot resolve ${uri.path} to a known entry type.`);
-      output.log(`Either it cannot be found or is neither a folder or file.`);
-    }
-  }
-
-  return null;
 }
 
 async function onCreateFile(event: FileCreateEvent) {
