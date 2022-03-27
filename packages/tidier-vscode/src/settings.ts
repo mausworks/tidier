@@ -41,7 +41,7 @@ export const problems = {
 
 export const renameOverwrite = {
   enabled: () =>
-    section("tidier.renameOverwrite.enabled").get<RenameOverwriteFeature>(
+    section("tidier.renameOverwrite").get<RenameOverwriteFeature>(
       "enabled",
       "auto"
     ),

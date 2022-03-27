@@ -6,7 +6,8 @@ export async function write(project: Project, globPatterns: string[]) {
   const basePath = project.folder.relative(resolve(process.cwd()));
   const globs = globPatterns.map((pattern) => Glob.within(basePath, pattern));
   const problems = await check(project, ...globs);
-  const overwrite = process.platform === "win32";
+  const overwrite =
+    process.platform === "win32" || process.platform === "darwin";
 
   for (const [path, details] of problems) {
     try {
