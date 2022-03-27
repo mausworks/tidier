@@ -151,16 +151,21 @@ export class TidierContext {
   }
 }
 
-// There doesn't seem to be anything built into the VSCode
-// extension API that allows you to get the platform.
-const isWindows = () => Boolean(env.appRoot && env.appRoot[0] !== "/");
+function renameOverwriteEnabled() {
+  const enabled = settings.renameOverwrite.enabled();
+
+  if (enabled === "auto") {
+    return (
+      env.appHost === "desktop" &&
+      (process.platform === "darwin" || process.platform === "win32")
+    );
+  } else {
+    return enabled === "always";
+  }
+}
 
 async function attemptFixes(project: Project, problems: readonly Problem[]) {
-  // Windows being weird:
-  // The Windows API for `stat` is case-insensitive, unlike NTFS.
-  // This means that if we stat "FooBar.js" when renaming from "fooBar.js",
-  // it will say that "FooBar.js" does indeed exist, even though it's named "fooBar.js".
-  const overwrite = isWindows();
+  const overwrite = renameOverwriteEnabled();
 
   for (const problem of problems) {
     try {
