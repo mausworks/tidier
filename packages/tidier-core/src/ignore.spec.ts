@@ -1,16 +1,16 @@
 import fc from "fast-check";
-import { ap, InMemoryFolder } from "tidier-test";
+import { arb, InMemoryFolder } from "tidier-test";
 import { Ignorefile, ProjectIgnore } from "./ignore";
 
 const arbitraryIgnorePaths = () =>
-  fc.set(fc.oneof(ap.folder(), ap.filePath()), { minLength: 1 });
+  fc.set(fc.oneof(arb.folderPath(), arb.filePath()), { minLength: 1 });
 
 describe("loading ignorefiles", () => {
   it("reads the file with the specified path on load and reload", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        ap.fileName(),
+        arb.folderPath(true),
+        arb.fileName(),
         arbitraryIgnorePaths(),
         async (root, fileName, contents) => {
           const folder = new InMemoryFolder(root, {
@@ -31,8 +31,8 @@ describe("loading ignorefiles", () => {
   it("does not err when an ignorefile doesn't exist", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        ap.fileName(),
+        arb.folderPath(true),
+        arb.fileName(),
         async (root, fileName) => {
           const folder = new InMemoryFolder(root);
           await expect(
@@ -66,7 +66,7 @@ describe("ignorefile glob semantics", () => {
 describe("project ignores", () => {
   it("does not add duplicate ignorefiles", () => {
     fc.assert(
-      fc.property(ap.filePath(), (path) => {
+      fc.property(arb.filePath(), (path) => {
         const folder = new InMemoryFolder(path);
         const ignorefiles = [
           new Ignorefile({ path, folder, patterns: [], semantics: "glob" }),
@@ -122,8 +122,8 @@ describe("project ignores", () => {
   it("reloads all ignorefiles on reload", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        fc.set(ap.fileName(), { minLength: 2, maxLength: 3 }),
+        arb.folderPath(true),
+        fc.set(arb.fileName(), { minLength: 2, maxLength: 3 }),
         async (root, ignorefileNames) => {
           const ignores = new ProjectIgnore();
           const folder = new InMemoryFolder(root);

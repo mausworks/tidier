@@ -2,7 +2,7 @@ jest.mock("fs");
 jest.mock("fs/promises");
 
 import fc from "fast-check";
-import { ap } from "tidier-test";
+import { arb } from "tidier-test";
 import { FileDirectory } from "./directory";
 import { dirname, join } from "path";
 import { vol } from "memfs";
@@ -33,7 +33,7 @@ const seedVolume = (
 describe("creating a file directory", () => {
   it("fails to create when the root does not exist", async () => {
     await fc.assert(
-      fc.asyncProperty(ap.folder(true), async (root) => {
+      fc.asyncProperty(arb.folderPath(true), async (root) => {
         await expect(FileDirectory.resolve(root)).rejects.toThrow();
       })
     );
@@ -42,8 +42,8 @@ describe("creating a file directory", () => {
   it("fails to create a when the root is a file", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        ap.fileName(),
+        arb.folderPath(true),
+        arb.fileName(),
         async (rootPath, filePath) => {
           seedVolume(rootPath, [filePath], []);
           const path = join(rootPath, filePath);
@@ -62,9 +62,9 @@ describe("getting an entry type", () => {
   it("returns null if the file or folder does not exist", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        ap.folder(),
-        ap.fileName(),
+        arb.folderPath(true),
+        arb.folderPath(),
+        arb.fileName(),
         async (rootPath, filePath, folderPath) => {
           seedVolume(rootPath, [], []);
           const root = await FileDirectory.resolve(rootPath);
@@ -81,8 +81,8 @@ describe("listing files", () => {
   it("lists files and folders within a directory", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        fc.set(ap.fileName(3), { minLength: 5, maxLength: 10 }),
+        arb.folderPath(true),
+        fc.set(arb.fileName(3), { minLength: 5, maxLength: 10 }),
         async (rootPath, names) => {
           const mid = Math.min(names.length / 2);
           const folders = names.slice(0, mid);

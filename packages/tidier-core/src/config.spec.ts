@@ -4,12 +4,12 @@ jest.mock("fs/promises");
 import fc from "fast-check";
 
 import { createProjectSettings, parseNamePattern } from "./config";
-import { ac } from "tidier-test";
+import { arb } from "tidier-test";
 
 describe("parsing conventions", () => {
   it("parses general formats", () => {
     fc.assert(
-      fc.property(ac.generalConvention(), (casings) => {
+      fc.property(arb.generalNameFormat(), (casings) => {
         expect(parseNamePattern(casings.join("."))).toEqual(casings);
       })
     );
@@ -17,7 +17,7 @@ describe("parsing conventions", () => {
 
   it("parses file formats", () => {
     fc.assert(
-      fc.property(ac.fileConvention(), (casings) => {
+      fc.property(arb.fileNameFormat(), (casings) => {
         expect(parseNamePattern(casings.join("."))).toEqual(casings);
       })
     );
@@ -37,9 +37,9 @@ describe("parsing conventions", () => {
   it("throws if extension format is not last", () => {
     fc.assert(
       fc.property(
-        fc.array(ac.general(), { minLength: 0 }),
-        ac.extension(),
-        fc.array(ac.general(), { minLength: 1 }),
+        fc.array(arb.generalCasing(), { minLength: 0 }),
+        arb.extensionCasing(),
+        fc.array(arb.generalCasing(), { minLength: 1 }),
         (head, extension, tail) => {
           expect(() =>
             parseNamePattern([...head, extension, ...tail].join("."))

@@ -1,5 +1,5 @@
 import fc from "fast-check";
-import { ap, InMemoryFolder } from "tidier-test";
+import { arb, InMemoryFolder } from "tidier-test";
 
 import { createProjectSettings, ProjectSettings, TidierConfig } from "./config";
 import { Project } from "./project";
@@ -16,7 +16,7 @@ const basicSettings: ProjectSettings = createProjectSettings(basicJSONConfig);
 describe("lifecycle", () => {
   it("includes new projects on include", async () => {
     fc.assert(
-      fc.property(ap.folder(true), (rootPath) => {
+      fc.property(arb.folderPath(true), (rootPath) => {
         const folder = new InMemoryFolder(rootPath);
 
         const projects = new Projects();
@@ -33,7 +33,7 @@ describe("lifecycle", () => {
 
   it("removes projects by path", async () => {
     fc.assert(
-      fc.property(ap.folder(true), (rootPath) => {
+      fc.property(arb.folderPath(true), (rootPath) => {
         const folder = new InMemoryFolder(rootPath);
 
         const projects = new Projects();
@@ -54,7 +54,7 @@ describe("combining projects", () => {
   it("combines projects without duplicates", async () => {
     fc.assert(
       fc.property(
-        fc.set(ap.folder(true), { minLength: 5, maxLength: 10 }),
+        fc.set(arb.folderPath(true), { minLength: 5, maxLength: 10 }),
         (rootPaths) => {
           const projects = new Projects();
           const moreProjects = new Projects();
