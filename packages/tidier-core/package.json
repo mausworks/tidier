@@ -1,7 +1,7 @@
 {
   "name": "tidier-core",
   "version": "0.0.0",
-  "description": "Abstractions for keeping your projects tidier",
+  "description": "Abstractions the file & folder name formatter",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "main": "dist/index.js",
