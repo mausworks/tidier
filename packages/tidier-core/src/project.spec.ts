@@ -1,6 +1,6 @@
 import { join } from "path";
 import fc from "fast-check";
-import { arb, InMemoryFolder } from "tidier-test";
+import { arb, TestFolder } from "tidier-test";
 
 import {
   createProjectSettings,
@@ -23,8 +23,8 @@ const seedFolder = (
   root: string,
   filePaths: string[],
   folderPaths: string[]
-): InMemoryFolder => {
-  const folder = new InMemoryFolder(root);
+): TestFolder => {
+  const folder = new TestFolder(root);
 
   for (const path of folderPaths) {
     folder.volume[join(root, path)] = null;

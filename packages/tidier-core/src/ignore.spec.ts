@@ -1,5 +1,5 @@
 import fc from "fast-check";
-import { arb, InMemoryFolder } from "tidier-test";
+import { arb, TestFolder } from "tidier-test";
 import { Ignorefile, ProjectIgnore } from "./ignore";
 
 const arbitraryIgnorePaths = () =>
@@ -13,7 +13,7 @@ describe("loading ignorefiles", () => {
         arb.fileName(),
         arbitraryIgnorePaths(),
         async (root, fileName, contents) => {
-          const folder = new InMemoryFolder(root, {
+          const folder = new TestFolder(root, {
             [`${root}/${fileName}`]: contents.join("\n"),
           });
           const readFileSpy = jest.spyOn(folder, "readFile");
@@ -34,7 +34,7 @@ describe("loading ignorefiles", () => {
         arb.folderPath(true),
         arb.fileName(),
         async (root, fileName) => {
-          const folder = new InMemoryFolder(root);
+          const folder = new TestFolder(root);
           await expect(
             Ignorefile.load(folder, fileName)
           ).resolves.not.toThrow();
@@ -46,7 +46,7 @@ describe("loading ignorefiles", () => {
 
 describe("ignorefile glob semantics", () => {
   test("excluding specific files", () => {
-    const folder = new InMemoryFolder("/root");
+    const folder = new TestFolder("/root");
     const patterns = ["**/*.js", "!**/foo.js"];
     const ignorefile = new Ignorefile({
       semantics: "glob",
@@ -67,7 +67,7 @@ describe("project ignores", () => {
   it("does not add duplicate ignorefiles", () => {
     fc.assert(
       fc.property(arb.filePath(), (path) => {
-        const folder = new InMemoryFolder(path);
+        const folder = new TestFolder(path);
         const ignorefiles = [
           new Ignorefile({ path, folder, patterns: [], semantics: "glob" }),
           new Ignorefile({ path, folder, patterns: [], semantics: "glob" }),
@@ -105,7 +105,7 @@ describe("project ignores", () => {
         const ignore = new ProjectIgnore();
         const ignorefile = new Ignorefile({
           path: "/.gitignore",
-          folder: new InMemoryFolder("/"),
+          folder: new TestFolder("/"),
           patterns: paths,
           semantics: "gitignore",
         });
@@ -126,7 +126,7 @@ describe("project ignores", () => {
         fc.set(arb.fileName(), { minLength: 2, maxLength: 3 }),
         async (root, ignorefileNames) => {
           const ignores = new ProjectIgnore();
-          const folder = new InMemoryFolder(root);
+          const folder = new TestFolder(root);
 
           for (const name of ignorefileNames) {
             folder.volume[`${root}/${name}`] = "foo.js";
