@@ -1,7 +1,7 @@
 {
   "name": "tidier",
   "version": "0.0.0",
-  "description": "A CLI for keeping your projects tidier",
+  "description": "The file & folder name formatter",
   "license": "ISC",
   "author": "mausworks <rasmuswennerstrom@gmail.com>",
   "homepage": "https://github.com/mausworks/tidier",
