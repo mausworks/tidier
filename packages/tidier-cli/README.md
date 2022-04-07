@@ -1,12 +1,16 @@
 # Tidier
 
-A CLI for keeping your projects tidier
+The file & folder name formatter
 
 ## Getting started
 
-Create a `.tidierrc` at the root of your project.
-Below you will find an example configuration that uses common naming convention for React projects,
-it should serve as a good baseline for whatever project you are currently working on.
+To start using Tidier, create a `.tidierrc` to the root of your project.
+This is where you will configure your file & folder name conventions.
+By default, Tidier will ignore files specified in your project's `.gitignore`,
+but you can add additional patterns in the "ignore"-section in the configuration file if need be.
+
+The example configuration below uses common React conventions,
+but it can be adapted to work with any project of any framework or language.
 
 ```json
 {
@@ -30,16 +34,14 @@ it should serve as a good baseline for whatever project you are currently workin
 }
 ```
 
-The configuration consists two sets of name conventions: one for files, and one for folders. 
-The first glob that matches gets priority, so more specific name conventions should be specified at the top.
+The configuration consists two sets of naming conventions: one for files, and one for folders.
+Each convention consists of a glob, and a _name format_.
+
+Globs are always matched from the location of the configuration file. 
+The first glob that matches gets priority, so conventions with higher specificity should be declared at the top.
 
 If you want to learn more about how Tidier applies name formats to files and folders,
-see the [main readme for the Tidier project on GitHub](https://github.com/mausworks/tidier#tidier--names).
-
-Tidier will automatically ignore files specified in your project's `.gitignore`,
-but you can add additional patterns in the "ignore"-section in the `.tidierrc` 
-
-Navigate to your project and run:
+see the [main README for Tidier on GitHub](https://github.com/mausworks/tidier#tidier--names).
 
 ## Usage
 
