@@ -166,3 +166,18 @@ Unless specified in a comment, Tidier uses recasing functions from [change-case]
 | `UC`                                                | Extension casing for `upper case`                     |
 | `Tc`                                                | Extension casing for `Title Case`                     |
 | `sPoNGEcAsE`                                        | _When your naming convention is chaos_                |
+
+# Glossary
+
+For convenience and consistency; the most noteworthy concepts and their meanings within Tidier are defined below:
+
+- **Fragment** — Part of a file name, delimited by the period character (`.`).
+- **Extension fragment** — The last fragment of a file or folder name.
+- **Name convention** — Defines which name format should apply to which files or folders.
+- **Name format** — A sequence of casings, delimited by the period character (`.`).
+- **General casing** — A casing which may be used to format to any fragment of a name; including the extension.
+- **Extension casing** — A casing which appears at the end of a name format and exclusively formats the extension fragment.
+- **Project** — A set of files folder for which the conventions specified in the configuration applies.
+- **Configuration** — Refers to the `.tidierrc` file, and denotes the root of a project.
+- **Ignorefile** — A file which specifies files and folders to ignore within a project, e.g: `.gitignore`.
+- **Recase** — The mechanism of changing the casing of a file or folder name.
