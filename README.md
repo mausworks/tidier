@@ -80,15 +80,15 @@ The first glob that matches gets priority, so conventions with higher specificit
 
 Tidier conceptualizes each file or folder name as a sequence of _fragments_ delimited by the `.` (period) character.
 
-As an example: A file named `App.test.tsx` consists of three fragments: `App`, `test` and `tsx`.
-When a name consists of more than one fragment, Tidier will consider the last one 
-to be the sole _extension fragment_ (`tsx` in this case)—this also includes folders.
-
 <div align="center">
 
 ![tidier-name-taxonomy-filename](https://user-images.githubusercontent.com/8259221/162204030-90f0f90a-40cc-451e-b958-9978c746566a.png)
 
 </div>
+
+The file named `FileBrowser.spec.tsx` consists of three fragments: `FileBrowser`, `spec` and `tsx`.
+If a name consists of more than one fragment, Tidier will consider the last one 
+to be the sole _extension fragment_. Note: This also applies to folders.
 
 ### Name formats
 
@@ -111,11 +111,11 @@ UPPER CASE -> README.MD
 ```
 
 To change the extension to use lower case instead, specify `UPPER CASE.lc` as the name format. 
-Two character casings such as `lc` are _extension casings_ (lc = "lower case") 
-and they are always only applied to the _extension fragment_.
+Two character casings such as `lc` are _extension casings_ (lc = "lower case"),
+and in contrast to the general casings, they are only ever applied to the _extension fragment_.
 
 The extension casing can only be used _once_ within the name format,
-and it always has to be the last fragment of the name format.
+and it always has to be the last fragment.
 
 ```
 UPPER CASE.lc -> README.md
@@ -129,9 +129,6 @@ UPPER CASE.lower case
 -> README.md, 
 -> SOME.longer.file.name.txt
 ```
-
-Because of this it is recommended to always specify an extension casing for all files
-to avoid unexpected renames.
 
 ### Border characters
 
