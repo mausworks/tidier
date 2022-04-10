@@ -58,17 +58,11 @@ but it can be adapted to work with any project of any framework or language.
 {
   "ignore": [ "**/build" ],
   "files": {
-    "**/src/setupTests.*": "camelCase.lc",
-    "**/src/reportWebVitals.ts": "camelCase.lc",
-    "**/src/**/index.*": "camelCase.lc",
-    "**/src/**/*.{tsx,jsx,css,scss,sass}": "PascalCase.kebab-case.lc",
-    "**/src/*": "kebab-case.lc",
-    "**/README*": "UPPER CASE.lc",
-    "**/LICENSE*": "UPPER CASE.lc",
-    "**/Dockerfile*": "PascalCase.lc",
-    "**/Procfile*": "PascalCase.lc",
-    "**/*.{ts,js}": "kebab-case.lc",
-    "**/*": "kebab-case.lc"
+    "**/src/(setupTests|reportWebVitals).*": "camelCase",
+    "**/src/**/index.*": "camelCase",
+    "**/src/**/*.{tsx,jsx,css,scss,sass}": "PascalCase.kebab-case",
+    "**/(README|LICENSE)*": "UPPER CASE.lc",
+    "**/*": "kebab-case"
   },
   "folders": {
     "**/*": "kebab-case"
@@ -86,15 +80,15 @@ The first glob that matches gets priority, so conventions with higher specificit
 
 Tidier conceptualizes each file or folder name as a sequence of _fragments_ delimited by the `.` (period) character.
 
-As an example: A file named `App.test.tsx` consists of three fragments: `App`, `test` and `tsx`.
-When a name consists of more than one fragment, Tidier will consider the last one 
-to be the sole _extension fragment_ (`tsx` in this case)—this also includes folders.
-
 <div align="center">
 
 ![tidier-name-taxonomy-filename](https://user-images.githubusercontent.com/8259221/162204030-90f0f90a-40cc-451e-b958-9978c746566a.png)
 
 </div>
+
+The file named `FileBrowser.spec.tsx` consists of three fragments: `FileBrowser`, `spec` and `tsx`.
+If a name consists of more than one fragment, Tidier will consider the last one 
+to be the sole _extension fragment_. Note: This also applies to folders.
 
 ### Name formats
 
@@ -117,11 +111,11 @@ UPPER CASE -> README.MD
 ```
 
 To change the extension to use lower case instead, specify `UPPER CASE.lc` as the name format. 
-Two character casings such as `lc` are _extension casings_ (lc = "lower case") 
-and they are always only applied to the _extension fragment_.
+Two character casings such as `lc` are _extension casings_ (lc = "lower case"),
+and in contrast to the general casings, they are only ever applied to the _extension fragment_.
 
 The extension casing can only be used _once_ within the name format,
-and it always has to be the last fragment of the name format.
+and it always has to be the last fragment.
 
 ```
 UPPER CASE.lc -> README.md
@@ -135,9 +129,6 @@ UPPER CASE.lower case
 -> README.md, 
 -> SOME.longer.file.name.txt
 ```
-
-Because of this it is recommended to always specify an extension casing for all files
-to avoid unexpected renames.
 
 ### Border characters
 
@@ -172,3 +163,18 @@ Unless specified in a comment, Tidier uses recasing functions from [change-case]
 | `UC`                                                | Extension casing for `upper case`                     |
 | `Tc`                                                | Extension casing for `Title Case`                     |
 | `sPoNGEcAsE`                                        | _When your naming convention is chaos_                |
+
+# Glossary
+
+For convenience and consistency; the most noteworthy concepts and their meanings within Tidier are defined below:
+
+- **Fragment** — Part of a file name, delimited by the period character (`.`).
+- **Extension fragment** — The last fragment of a file or folder name.
+- **Name convention** — Defines which name format should apply to which files or folders.
+- **Name format** — A sequence of casings, delimited by the period character (`.`).
+- **General casing** — A casing which may be used to format to any fragment of a name; including the extension.
+- **Extension casing** — A casing which appears at the end of a name format and exclusively formats the extension fragment.
+- **Project** — A set of files folder for which the conventions specified in the configuration applies.
+- **Configuration** — Refers to the `.tidierrc` file, and denotes the root of a project.
+- **Ignorefile** — A file which specifies files and folders to ignore within a project, e.g: `.gitignore`.
+- **Recase** — The mechanism of changing the casing of a file or folder name.

@@ -3,9 +3,8 @@
     "examples/**"
   ],
   "files": {
-    "**/README*": "UPPER CASE.lc",
-    "**/LICENSE*": "UPPER CASE.lc",
-    "**/CHANGELOG*": "UPPER CASE.lc",
+    "LICENSE": "UPPER CASE",
+    "**/*.md": "UPPER CASE.lc",
     "**/*": "kebab-case.lc"
   },
   "folders": {

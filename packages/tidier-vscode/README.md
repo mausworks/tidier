@@ -26,17 +26,11 @@ but it can be adapted to work with any project of any framework or language.
 {
   "ignore": [ "**/build" ],
   "files": {
-    "**/src/setupTests.*": "camelCase.lc",
-    "**/src/reportWebVitals.ts": "camelCase.lc",
-    "**/src/**/index.*": "camelCase.lc",
-    "**/src/**/*.{tsx,jsx,css,scss,sass}": "PascalCase.kebab-case.lc",
-    "**/src/*": "kebab-case.lc",
-    "**/README*": "UPPER CASE.lc",
-    "**/LICENSE*": "UPPER CASE.lc",
-    "**/Dockerfile*": "PascalCase.lc",
-    "**/Procfile*": "PascalCase.lc",
-    "**/*.{ts,js}": "kebab-case.lc",
-    "**/*": "kebab-case.lc"
+    "**/src/(setupTests|reportWebVitals).*": "camelCase",
+    "**/src/**/index.*": "camelCase",
+    "**/src/**/*.{tsx,jsx,css,scss,sass}": "PascalCase.kebab-case",
+    "**/(README|LICENSE)*": "UPPER CASE.lc",
+    "**/*": "kebab-case"
   },
   "folders": {
     "**/*": "kebab-case"
