@@ -1,6 +1,6 @@
 import fc from "fast-check";
 
-import { ap, ac } from "tidier-test";
+import { arb } from "tidier-test";
 import { parseNamePattern } from "./config";
 import { recase } from "./recase";
 
@@ -60,7 +60,10 @@ test("expectations of renames", () => {
 test("formats should match themselves", () => {
   fc.assert(
     fc.property(
-      fc.oneof(ac.saneGeneralFormat(), ac.saneFileFormat()),
+      fc.oneof(
+        arb.saneGeneralNameFormatString(),
+        arb.saneFileNameFormatString()
+      ),
       (format) => {
         expect(recase(format, parseNamePattern(format))).toBe(format);
       }
@@ -70,7 +73,7 @@ test("formats should match themselves", () => {
 
 test("that sPoNGEcAsE contains at least one upper case and lower case character", () => {
   fc.assert(
-    fc.property(ap.fragment(10, 15), (name) => {
+    fc.property(arb.pathSegment(10, 15), (name) => {
       const newName = recase(name, ["sPoNGEcAsE"]);
 
       expect(newName.split("").some((c) => c === c.toUpperCase()));

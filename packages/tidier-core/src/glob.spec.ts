@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { Glob } from "./glob";
 
-import { ap } from "tidier-test";
+import { arb } from "tidier-test";
 import { join } from "path";
 
 const matches = {
@@ -22,7 +22,7 @@ test("explicit matches", () => {
 
 test("paths match themselves", () => {
   fc.assert(
-    fc.property(fc.oneof(ap.filePath(), ap.folder()), (path) =>
+    fc.property(fc.oneof(arb.filePath(), arb.folderPath()), (path) =>
       new Glob(path).matches(path)
     )
   );
@@ -31,7 +31,7 @@ test("paths match themselves", () => {
 test("different paths do not match each other", () => {
   fc.assert(
     fc.property(
-      fc.set(fc.oneof(ap.filePath(), ap.folder()), {
+      fc.set(fc.oneof(arb.filePath(), arb.folderPath()), {
         minLength: 2,
         maxLength: 2,
       }),
@@ -48,8 +48,8 @@ describe("appending a prefix to the glob", () => {
   it("appends the prefix to the path", () => {
     fc.assert(
       fc.property(
-        ap.folder(),
-        fc.array(fc.oneof(ap.folder(), ap.filePath())),
+        arb.folderPath(),
+        fc.array(fc.oneof(arb.folderPath(), arb.filePath())),
         (prefix, paths) => {
           for (const path of paths) {
             const glob = Glob.within(prefix, path);
@@ -64,8 +64,8 @@ describe("appending a prefix to the glob", () => {
   it('preserves the "!" at the start for negating patterns', () => {
     fc.assert(
       fc.property(
-        ap.folder(),
-        fc.array(fc.oneof(ap.folder(), ap.filePath())),
+        arb.folderPath(),
+        fc.array(fc.oneof(arb.folderPath(), arb.filePath())),
         (prefix, paths) => {
           for (const path of paths) {
             const glob = Glob.within(prefix, "!" + path);

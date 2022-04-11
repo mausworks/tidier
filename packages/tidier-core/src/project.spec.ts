@@ -1,6 +1,6 @@
 import { join } from "path";
 import fc from "fast-check";
-import { ap, InMemoryFolder } from "tidier-test";
+import { arb, TestFolder } from "tidier-test";
 
 import {
   createProjectSettings,
@@ -23,8 +23,8 @@ const seedFolder = (
   root: string,
   filePaths: string[],
   folderPaths: string[]
-): InMemoryFolder => {
-  const folder = new InMemoryFolder(root);
+): TestFolder => {
+  const folder = new TestFolder(root);
 
   for (const path of folderPaths) {
     folder.volume[join(root, path)] = null;
@@ -40,7 +40,7 @@ const seedFolder = (
 describe("project creation", () => {
   it("creates a project when the root folder exists, and a config is provided", async () => {
     await fc.assert(
-      fc.asyncProperty(ap.folder(true), async (rootPath) => {
+      fc.asyncProperty(arb.folderPath(true), async (rootPath) => {
         const folder = seedFolder(rootPath, [], []);
 
         expect(() => new Project(folder, basicSettings)).not.toThrow();
@@ -51,8 +51,8 @@ describe("project creation", () => {
   it("reads the .gitignore files from the project root when using `load` without any options", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        fc.array(fc.oneof(ap.folder(), ap.filePath()), { minLength: 1 }),
+        arb.folderPath(true),
+        fc.array(fc.oneof(arb.folderPath(), arb.filePath()), { minLength: 1 }),
         async (rootPath, ignore) => {
           const folder = seedFolder(rootPath, [], []);
           const configPath = join(rootPath, TIDIER_CONFIG_NAME);
@@ -72,11 +72,11 @@ describe("project creation", () => {
   it("reads the specified ignorefiles on `load`", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
+        arb.folderPath(true),
         fc.array(
           fc.tuple(
-            ap.filePath(),
-            fc.set(fc.oneof(ap.folder(), ap.filePath()), { minLength: 1 })
+            arb.filePath(),
+            fc.set(fc.oneof(arb.folderPath(), arb.filePath()), { minLength: 1 })
           ),
           { minLength: 2 }
         ),
@@ -111,8 +111,8 @@ describe("listing", () => {
   it("lists all files (except ignored) with '**/*'", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        fc.set(ap.filePath({ minLength: 2, maxLength: 2 }), {
+        arb.folderPath(true),
+        fc.set(arb.filePath({ minLength: 2, maxLength: 2 }), {
           minLength: 2,
           maxLength: 2,
         }),
@@ -135,8 +135,8 @@ describe("listing", () => {
   it("lists all folders (except ignored) with '**/*'", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        fc.set(ap.folder(false, { maxLength: 1 }), {
+        arb.folderPath(true),
+        fc.set(arb.folderPath(false, { maxLength: 1 }), {
           minLength: 2,
           maxLength: 2,
         }),
@@ -160,8 +160,8 @@ describe("listing", () => {
   it("does not include other project files", async () => {
     await fc.assert(
       fc.asyncProperty(
-        ap.folder(true),
-        fc.set(ap.folder(), { minLength: 2 }),
+        arb.folderPath(true),
+        fc.set(arb.folderPath(), { minLength: 2 }),
         async (rootPath, folders) => {
           const root = seedFolder(rootPath, [], folders);
           const otherRoot = folders[folders.length - 1];

@@ -1,7 +1,7 @@
-import { InMemoryFolder } from ".";
+import { TestFolder } from ".";
 
 test("listing", async () => {
-  const folder = new InMemoryFolder("/foo", {
+  const folder = new TestFolder("/foo", {
     "/foo": null,
     "/foo/bar/baz": null,
     "/foo/bar/baz/bat/": null,

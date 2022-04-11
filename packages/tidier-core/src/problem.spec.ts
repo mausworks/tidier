@@ -1,4 +1,4 @@
-import { InMemoryFolder } from "tidier-test";
+import { TestFolder } from "tidier-test";
 import { createProjectSettings, TidierConfig } from "./config";
 import { checkPath, getProblemDetails, ProblemDetails } from "./problem";
 import { Project } from "./project";
@@ -13,21 +13,21 @@ const config: TidierConfig = {
 
 describe("checking a specific path for problems", () => {
   it("returns null if the path does not exist", async () => {
-    const folder = new InMemoryFolder("root");
+    const folder = new TestFolder("root");
     const project = new Project(folder, createProjectSettings(config));
 
     await expect(checkPath(project, "some-path")).resolves.toBeNull();
   });
 
   it("returns null if the name is as expected", async () => {
-    const folder = new InMemoryFolder("root", { "root/some-path": null });
+    const folder = new TestFolder("root", { "root/some-path": null });
     const project = new Project(folder, createProjectSettings(config));
 
     await expect(checkPath(project, "some-path")).resolves.toBeNull();
   });
 
   it("returns problem details if there is a problem", async () => {
-    const folder = new InMemoryFolder("root", { "root/SOME_PATH": null });
+    const folder = new TestFolder("root", { "root/SOME_PATH": null });
     const project = new Project(folder, createProjectSettings(config));
 
     await expect(
@@ -41,7 +41,7 @@ describe("checking a specific path for problems", () => {
 });
 
 describe("getting problem details", () => {
-  const folder = new InMemoryFolder("root");
+  const folder = new TestFolder("root");
   const project = new Project(folder, createProjectSettings(config));
 
   it("returns problem details if there is a problem", () => {

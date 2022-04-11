@@ -1,13 +1,13 @@
 import fc from "fast-check";
 
-import { ac } from "tidier-test";
+import { arb } from "tidier-test";
 import { resolveCasing } from "./convention";
 import { validateCasing } from "./recase";
 
 describe("resolving aliases", () => {
   test("general casings return themselves", () => {
     fc.assert(
-      fc.property(ac.general(), (casing) => {
+      fc.property(arb.generalCasing(), (casing) => {
         return resolveCasing(casing) === casing;
       })
     );
@@ -15,7 +15,7 @@ describe("resolving aliases", () => {
 
   test("general aliases return a valid general casing", () => {
     fc.assert(
-      fc.property(ac.generalAlias(), (alias) => {
+      fc.property(arb.generalCasingAlias(), (alias) => {
         return validateCasing(resolveCasing(alias)) !== null;
       })
     );

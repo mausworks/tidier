@@ -9,7 +9,8 @@ import {
 import { posix } from "path";
 const { join, dirname } = posix;
 
-export class InMemoryFolder implements Folder {
+/** Maintains an in-memory folder that can be used for testing. */
+export class TestFolder implements Folder {
   path: string;
   volume: Record<string, string | null>;
 
@@ -24,23 +25,27 @@ export class InMemoryFolder implements Folder {
   }
 
   child(path: string): Folder {
-    return new InMemoryFolder(this.absolute(path), this.volume);
+    return new TestFolder(this.absolute(path), this.volume);
   }
+
   parent(): Folder | null {
     const parentPath = dirname(this.path);
 
     if (parentPath === this.path) {
       return null;
     } else {
-      return new InMemoryFolder(parentPath, this.volume);
+      return new TestFolder(parentPath, this.volume);
     }
   }
+
   absolute(path: string): string {
     return join(this.path, path);
   }
+
   relative(path: string): string {
     return disjoin(this.path, path);
   }
+
   list(path?: string): Promise<readonly FolderEntry[]> {
     const root = this.absolute(path || "/");
     const seenPaths = new Set<string>();
@@ -67,6 +72,7 @@ export class InMemoryFolder implements Folder {
 
     return Promise.resolve(entries);
   }
+
   rename(path: string, newPath: string): Promise<void> {
     const oldPath = this.absolute(path);
     const data = this.volume[oldPath];
@@ -80,6 +86,7 @@ export class InMemoryFolder implements Folder {
 
     return Promise.resolve();
   }
+
   entryType(path: string): Promise<EntryType | null> {
     const result = this.volume[join(this.path, path)];
     if (result === undefined) {
@@ -90,6 +97,7 @@ export class InMemoryFolder implements Folder {
       return Promise.resolve("file");
     }
   }
+
   readFile(path: string, _encoding?: BufferEncoding): Promise<string> {
     const result = this.volume[this.absolute(path)];
 
@@ -103,13 +111,10 @@ export class InMemoryFolder implements Folder {
   }
 }
 
-const isChildOf = (root: string, path: string) => {
-  root = withTrailingSlash(root);
+const isChildOf = (root: string, path: string) =>
+  path.startsWith(withTrailingSlash(root));
 
-  return path.startsWith(root);
-};
-
-const asDescendantOf = (root: string, path: string) => {
+function asDescendantOf(root: string, path: string) {
   root = withTrailingSlash(root);
 
   const nextSlash = path.indexOf("/", root.length);
@@ -119,4 +124,4 @@ const asDescendantOf = (root: string, path: string) => {
   } else {
     return path;
   }
-};
+}
